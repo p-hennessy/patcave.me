@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="https://ns-phennessy.github.io/patcave.me/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<url>
+<loc>https://ns-phennessy.github.io/patcave.me/</loc>
+</url>
+<url>
+<loc>https://ns-phennessy.github.io/patcave.me/about-me/</loc>
+<lastmod>2022-01-25T15:02:10-07:00</lastmod>
+<image:image>
+<image:loc>https://ns-phennessy.github.io/patcave.me/media\posts\3//portrait.jpeg</image:loc>
+<image:title><![CDATA[]]></image:title>
+</image:image>
+</url>
+<url>
+<loc>https://ns-phennessy.github.io/patcave.me/automate-all-the-things/</loc>
+<lastmod>2022-01-25T14:13:54-07:00</lastmod>
+<image:image>
+<image:loc>https://ns-phennessy.github.io/patcave.me/media\posts\1/tf2_solly.png</image:loc>
+<image:title><![CDATA[]]></image:title>
+</image:image>
+<image:image>
+<image:loc>https://ns-phennessy.github.io/patcave.me/media\posts\1/serveme-2.png</image:loc>
+<image:title><![CDATA[]]></image:title>
+</image:image>
+<image:image>
+<image:loc>https://ns-phennessy.github.io/patcave.me/media\posts\1/tf2mon.png</image:loc>
+<image:title><![CDATA[]]></image:title>
+</image:image>
+</url>
+<url>
+<loc>https://ns-phennessy.github.io/patcave.me/setting-up-a-secure-linux-server/</loc>
+<lastmod>2022-01-25T15:18:26-07:00</lastmod>
+</url>
+<url>
+<loc>https://ns-phennessy.github.io/patcave.me/what-i-learned-from-making-a-python-chatbot/</loc>
+<lastmod>2022-01-25T14:48:39-07:00</lastmod>
+<image:image>
+<image:loc>https://ns-phennessy.github.io/patcave.me/media\posts\2/cover-1.png</image:loc>
+<image:title><![CDATA[]]></image:title>
+</image:image>
+</url>
+</urlset>
