@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>The Patcave</title>
-    <link href="https://ns-phennessy.github.io/patcave.me/feed.xml" rel="self" />
-    <link href="https://ns-phennessy.github.io/patcave.me" />
+    <link href="https://patcave.me/feed.xml" rel="self" />
+    <link href="https://patcave.me" />
     <updated>2022-01-25T20:29:03-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
-    <id>https://ns-phennessy.github.io/patcave.me</id>
+    <id>https://patcave.me</id>
 
     <entry>
         <title>Today I&#x27;m officially a &quot;professional&quot; level designer!</title>
         <author>
             <name>Patrick Hennessy</name>
         </author>
-        <link href="https://ns-phennessy.github.io/patcave.me/i-am-officially-a-professional-level-designer/"/>
-        <id>https://ns-phennessy.github.io/patcave.me/i-am-officially-a-professional-level-designer/</id>
+        <link href="https://patcave.me/i-am-officially-a-professional-level-designer/"/>
+        <id>https://patcave.me/i-am-officially-a-professional-level-designer/</id>
 
         <updated>2022-01-25T20:29:03-07:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="https://ns-phennessy.github.io/patcave.me/media/posts/5/Pd_farmageddon.png" alt="" />
+                        <img src="https://patcave.me/media/posts/5/Pd_farmageddon.png" alt="" />
                     Okay okay, maybe that title is a bit of an overstatement, but I have very exciting news! Among my many hobbies; one I've been doing since the beginning of the pandemic is level design, specifically for the game: Team Fortress 2. I'm excited to share&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://ns-phennessy.github.io/patcave.me/media/posts/5/Pd_farmageddon.png" alt="" />
+                    <img src="https://patcave.me/media/posts/5/Pd_farmageddon.png" alt="" />
                 <p>Okay okay, maybe that title is a bit of an overstatement, but I have very exciting news!</p>
 <p>Among my many hobbies; one I've been doing since the beginning of the pandemic is level design, specifically for the game: Team Fortress 2.</p>
 <p>I'm excited to share that today Valve purchased a level that I worked on (with a team of 8 others)!</p>
@@ -35,18 +35,18 @@
 <p>The concept of the map is that a farmer, in wanting to make the biggest pumpkin he could, gave his pumpkin radioactive sludge to make it as big as possible. It's possible that he was eaten by his creation...</p>
 <p>Your job is to collect enough weed killer to kill this abomination!</p>
 <div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="3">
-<figure class="gallery__item"><a href="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/download.jpg" data-size="637x358"><img loading="lazy" src="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/download-thumbnail.jpg" alt="" width="637" height="358"></a>
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5/gallery/download.jpg" data-size="637x358"><img loading="lazy" src="https://patcave.me/media/posts/5/gallery/download-thumbnail.jpg" alt="" width="637" height="358"></a>
 <figcaption>Gourdon, the pumpkin monster</figcaption>
 </figure>
-<figure class="gallery__item"><a href="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/1280px-Farmageddon_RED_Grain_Shed_Outside.jpeg" data-size="1280x800"><img loading="lazy" src="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/1280px-Farmageddon_RED_Grain_Shed_Outside-thumbnail.jpeg" alt="" width="720" height="450"></a></figure>
-<figure class="gallery__item"><a href="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/download-2.jpg" data-size="637x358"><img loading="lazy" src="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/download-2-thumbnail.jpg" alt="" width="637" height="358"></a></figure>
-<figure class="gallery__item"><a href="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/download-1.jpg" data-size="637x358"><img loading="lazy" src="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/download-1-thumbnail.jpg" alt="" width="637" height="358"></a>
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5/gallery/1280px-Farmageddon_RED_Grain_Shed_Outside.jpeg" data-size="1280x800"><img loading="lazy" src="https://patcave.me/media/posts/5/gallery/1280px-Farmageddon_RED_Grain_Shed_Outside-thumbnail.jpeg" alt="" width="720" height="450"></a></figure>
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5/gallery/download-2.jpg" data-size="637x358"><img loading="lazy" src="https://patcave.me/media/posts/5/gallery/download-2-thumbnail.jpg" alt="" width="637" height="358"></a></figure>
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5/gallery/download-1.jpg" data-size="637x358"><img loading="lazy" src="https://patcave.me/media/posts/5/gallery/download-1-thumbnail.jpg" alt="" width="637" height="358"></a>
 <figcaption>Beware of the scarecrow monsters!</figcaption>
 </figure>
-<figure class="gallery__item"><a href="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/Farmageddon_Inside_Pumpkin.png" data-size="1920x1080"><img loading="lazy" src="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/Farmageddon_Inside_Pumpkin-thumbnail.png" alt="" width="720" height="405"></a>
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5/gallery/Farmageddon_Inside_Pumpkin.png" data-size="1920x1080"><img loading="lazy" src="https://patcave.me/media/posts/5/gallery/Farmageddon_Inside_Pumpkin-thumbnail.png" alt="" width="720" height="405"></a>
 <figcaption>Inside the pumpkin, you can find his heart</figcaption>
 </figure>
-<figure class="gallery__item"><a href="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/Farmageddon_overview.png" data-size="1366x768"><img loading="lazy" src="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/Farmageddon_overview-thumbnail.png" alt="" width="720" height="405"></a>
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5/gallery/Farmageddon_overview.png" data-size="1366x768"><img loading="lazy" src="https://patcave.me/media/posts/5/gallery/Farmageddon_overview-thumbnail.png" alt="" width="720" height="405"></a>
 <figcaption>Level Overview</figcaption>
 </figure>
 </div></div>
@@ -55,10 +55,10 @@
 <h3>Weed Killer Pickups</h3>
 <p>These 2 models are the pickups you get when you kill a player:</p>
 <div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="4">
-<figure class="gallery__item"><a href="https://ns-phennessy.github.io/patcave.me/media/posts/5//gallery/Largeweedkiller.png" data-size="725x725"><img loading="lazy" src="https://ns-phennessy.github.io/patcave.me/media/posts/5//gallery/Largeweedkiller-thumbnail.png" alt="" width="720" height="720"></a>
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5//gallery/Largeweedkiller.png" data-size="725x725"><img loading="lazy" src="https://patcave.me/media/posts/5//gallery/Largeweedkiller-thumbnail.png" alt="" width="720" height="720"></a>
 <figcaption>Large Weed Killer Pickup</figcaption>
 </figure>
-<figure class="gallery__item"><a href="https://ns-phennessy.github.io/patcave.me/media/posts/5//gallery/Weedkillersmall.png" data-size="725x725"><img loading="lazy" src="https://ns-phennessy.github.io/patcave.me/media/posts/5//gallery/Weedkillersmall-thumbnail.png" alt="" width="720" height="720"></a>
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5//gallery/Weedkillersmall.png" data-size="725x725"><img loading="lazy" src="https://patcave.me/media/posts/5//gallery/Weedkillersmall-thumbnail.png" alt="" width="720" height="720"></a>
 <figcaption>Small Weed Killer Pickup</figcaption>
 </figure>
 </div></div>
@@ -83,10 +83,10 @@
 <figure class="post__video"><video loading="lazy" width="300" height="150" controls="controls" data-mce-fragment="1">
 <source src="https://cdn.discordapp.com/attachments/709803812881170607/886865559445205062/2021-09-13_00-45-54.mp4" type="video/mp4" /></video></figure>
 <div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="4">
-<figure class="gallery__item"><a href="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/Screenshot_159.png" data-size="1919x1049"><img loading="lazy" src="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/Screenshot_159-thumbnail.png" alt="" width="720" height="394"></a>
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5/gallery/Screenshot_159.png" data-size="1919x1049"><img loading="lazy" src="https://patcave.me/media/posts/5/gallery/Screenshot_159-thumbnail.png" alt="" width="720" height="394"></a>
 <figcaption>Gibs</figcaption>
 </figure>
-<figure class="gallery__item"><a href="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/Screenshot_153.png" data-size="1919x1049"><img loading="lazy" src="https://ns-phennessy.github.io/patcave.me/media/posts/5/gallery/Screenshot_153-thumbnail.png" alt="" width="720" height="394"></a>
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5/gallery/Screenshot_153.png" data-size="1919x1049"><img loading="lazy" src="https://patcave.me/media/posts/5/gallery/Screenshot_153-thumbnail.png" alt="" width="720" height="394"></a>
 <figcaption>Particle Effects</figcaption>
 </figure>
 </div></div>
@@ -98,8 +98,8 @@
         <author>
             <name>Patrick Hennessy</name>
         </author>
-        <link href="https://ns-phennessy.github.io/patcave.me/automate-all-the-things/"/>
-        <id>https://ns-phennessy.github.io/patcave.me/automate-all-the-things/</id>
+        <link href="https://patcave.me/automate-all-the-things/"/>
+        <id>https://patcave.me/automate-all-the-things/</id>
 
         <updated>2022-01-25T17:11:49-07:00</updated>
             <summary>
@@ -119,7 +119,7 @@
 <p>I have continued doing this ever since. So lets talk about my latest venture...</p>
 <hr>
 <h1 id="my-team-fortress-2-server-automation-project">Team Fortress 2 server automation project</h1>
-<figure class="post__image"><img loading="lazy"  src="https://ns-phennessy.github.io/patcave.me/media/posts/1/tf2_solly.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2_solly-xs.png 300w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2_solly-sm.png 480w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2_solly-md.png 768w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2_solly-lg.png 1024w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2_solly-xl.png 1360w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2_solly-2xl.png 1600w"  alt="" width="1024" height="512"></figure>
+<figure class="post__image"><img loading="lazy"  src="https://patcave.me/media/posts/1/tf2_solly.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/1/responsive/tf2_solly-xs.png 300w ,https://patcave.me/media/posts/1/responsive/tf2_solly-sm.png 480w ,https://patcave.me/media/posts/1/responsive/tf2_solly-md.png 768w ,https://patcave.me/media/posts/1/responsive/tf2_solly-lg.png 1024w ,https://patcave.me/media/posts/1/responsive/tf2_solly-xl.png 1360w ,https://patcave.me/media/posts/1/responsive/tf2_solly-2xl.png 1600w"  alt="" width="1024" height="512"></figure>
 <p>Easily my favorite game of all time is <a href="http://www.teamfortress.com/">Team Fortress 2</a>, I love this game so much, I could probably write an entire book on what TF2 does right.</p>
 <p>So I have all these computer skills now; and one of the awesome things about Valve is they allow you to run your own servers! Not only that but there is a deep history of people modding the source engine for various things. Infact Valve literally released an <a href="https://github.com/ValveSoftware/source-sdk-2013">SDK</a> that exposes a lot of power to modders.</p>
 <p>There's no way I'm not using my computer skills to make all of this stuff awesome. Basically this project is solving the problem that; I want as close to a self service competitive TF2 server than I can get.</p>
@@ -190,12 +190,12 @@
 <p> </p>
 <h4 id="discord-bot-integration">Discord Bot integration</h4>
 <p>I go a step further to enabling my Discord bot to respond to requests for a server. Not only that but it will give the user very useful information about the server and how to use it. Putting the docs right in front of them. Of course I'm using my own <a href="https://github.com/ns-phennessy/Arcbot">Discord bot library</a> for this.</p>
-<figure class="post__image"><img loading="lazy"  src="https://ns-phennessy.github.io/patcave.me/media/posts/1/serveme-2.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/serveme-2-xs.png 300w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/serveme-2-sm.png 480w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/serveme-2-md.png 768w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/serveme-2-lg.png 1024w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/serveme-2-xl.png 1360w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/serveme-2-2xl.png 1600w"  alt="" width="979" height="490"></figure>
+<figure class="post__image"><img loading="lazy"  src="https://patcave.me/media/posts/1/serveme-2.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/1/responsive/serveme-2-xs.png 300w ,https://patcave.me/media/posts/1/responsive/serveme-2-sm.png 480w ,https://patcave.me/media/posts/1/responsive/serveme-2-md.png 768w ,https://patcave.me/media/posts/1/responsive/serveme-2-lg.png 1024w ,https://patcave.me/media/posts/1/responsive/serveme-2-xl.png 1360w ,https://patcave.me/media/posts/1/responsive/serveme-2-2xl.png 1600w"  alt="" width="979" height="490"></figure>
 <p><em>Source code</em>: <a href="https://github.com/scrims-tf/discord-bot-plugins">scrims-tf/discord-bot-plugins</a></p>
 <p> </p>
 <h4 id="monitoring">Monitoring</h4>
 <p>Not only <em>that</em>; but it also automatically sends data to my <a href="https://www.influxdata.com/time-series-platform/">monitoring stack</a></p>
-<figure class="post__image"><img loading="lazy"  src="https://ns-phennessy.github.io/patcave.me/media/posts/1/tf2mon.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2mon-xs.png 300w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2mon-sm.png 480w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2mon-md.png 768w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2mon-lg.png 1024w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2mon-xl.png 1360w ,https://ns-phennessy.github.io/patcave.me/media/posts/1/responsive/tf2mon-2xl.png 1600w"  alt="" width="1324" height="683"></figure>
+<figure class="post__image"><img loading="lazy"  src="https://patcave.me/media/posts/1/tf2mon.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/1/responsive/tf2mon-xs.png 300w ,https://patcave.me/media/posts/1/responsive/tf2mon-sm.png 480w ,https://patcave.me/media/posts/1/responsive/tf2mon-md.png 768w ,https://patcave.me/media/posts/1/responsive/tf2mon-lg.png 1024w ,https://patcave.me/media/posts/1/responsive/tf2mon-xl.png 1360w ,https://patcave.me/media/posts/1/responsive/tf2mon-2xl.png 1600w"  alt="" width="1324" height="683"></figure>
 <p>My monitoring stack will send me alerts (also in Discord) when..</p>
 <ul>
 <li>High player count</li>
@@ -228,19 +228,19 @@
         <author>
             <name>Patrick Hennessy</name>
         </author>
-        <link href="https://ns-phennessy.github.io/patcave.me/what-i-learned-from-making-a-python-chatbot/"/>
-        <id>https://ns-phennessy.github.io/patcave.me/what-i-learned-from-making-a-python-chatbot/</id>
+        <link href="https://patcave.me/what-i-learned-from-making-a-python-chatbot/"/>
+        <id>https://patcave.me/what-i-learned-from-making-a-python-chatbot/</id>
 
         <updated>2022-01-25T17:11:36-07:00</updated>
             <summary>
                 <![CDATA[
-                        <img src="https://ns-phennessy.github.io/patcave.me/media/posts/2/cover-1.png" alt="" />
+                        <img src="https://patcave.me/media/posts/2/cover-1.png" alt="" />
                     Intro Lately I've been reading and hearing a lot about Chat Ops. It's a practice started by Github which uses a chat service like Hipchat or Slack with a bot user to provide feedback and insights into their infrastructure. This is super cool because it allows for transparency in to&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                    <img src="https://ns-phennessy.github.io/patcave.me/media/posts/2/cover-1.png" alt="" />
+                    <img src="https://patcave.me/media/posts/2/cover-1.png" alt="" />
                 <h2 dir="auto">Intro</h2>
 <p dir="auto">Lately I've been reading and hearing a lot about <a href="https://www.pagerduty.com/blog/what-is-chatops/" rel="nofollow">Chat Ops</a>. It's a practice started by Github which uses a chat service like <em>Hipchat</em> or <em>Slack</em> with a bot user to provide feedback and insights into their infrastructure.</p>
 <p dir="auto">This is super cool because it allows for transparency in to what you're doing at any given time. Very useful in a high stress situation, like a big production failure where multiple engineers are trying to fix it; they can easily coordinate their efforts and not have to tell everyone what they're doing right that second because everyone can see it.</p>
@@ -340,8 +340,8 @@
         <author>
             <name>Patrick Hennessy</name>
         </author>
-        <link href="https://ns-phennessy.github.io/patcave.me/setting-up-a-secure-linux-server/"/>
-        <id>https://ns-phennessy.github.io/patcave.me/setting-up-a-secure-linux-server/</id>
+        <link href="https://patcave.me/setting-up-a-secure-linux-server/"/>
+        <id>https://patcave.me/setting-up-a-secure-linux-server/</id>
 
         <updated>2022-01-25T15:18:26-07:00</updated>
             <summary>
