@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-01-25T22:55:31-07:00</updated>
+    <updated>2022-01-27T00:38:41-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Level Design"/>
             <category term="Gaming"/>
 
-        <updated>2022-01-25T22:55:31-07:00</updated>
+        <updated>2022-01-27T00:32:44-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/5/Pd_farmageddon.png" alt="" />
@@ -72,10 +72,12 @@
 <p>Basically I gave the big areas some up and down movement, and added bones to each tumor to make them appear to be pulsing.</p>
 <figure class="post__video"><video loading="lazy" width="300" height="150" controls="controls" data-mce-fragment="1">
 <source src="https://cdn.discordapp.com/attachments/279748353343094784/886125731107700746/2021-09-10_23-46-30.mp4" type="video/mp4" /></video></figure>
-<figure class="post__image post__image--left"><img loading="lazy"  src="https://cdn.discordapp.com/attachments/279748353343094784/885747187202527302/Screenshot_145.png" data-is-external-image="true"  alt="Pumpkin Monster Rig" width="1919" height="1049"></figure>
-<p> </p>
 <p>This was surprisingly difficult because Source engine requires the use of "bones" and each bone can rigidly deform a set of vertices near by it. Making a "rig" for basically a sphere is a bit unconventional. It works though! </p>
-<p> </p>
+<div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="4">
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/5/gallery/Screenshot_145.png" data-size="1919x1049"><img loading="lazy" src="https://patcave.me/media/posts/5/gallery/Screenshot_145-thumbnail.png" alt="" width="720" height="394"></a>
+<figcaption>Gourdon Rig</figcaption>
+</figure>
+</div></div>
 <hr>
 <h3>Pumpkin monster death effects</h3>
 <p>This is the full "death" effect I did for the pumpkin monster (named "Gourdon")</p>
@@ -106,7 +108,7 @@
             <category term="Programming Stuff"/>
             <category term="Gaming"/>
 
-        <updated>2022-01-25T22:13:01-07:00</updated>
+        <updated>2022-01-27T00:36:46-07:00</updated>
             <summary>
                 <![CDATA[
                     I have this hobby where I basically take things that I spend a lot of time with and use my coding skills to try to automate things as much as I can, particularly in the realm of the video games I play. I originally started&hellip;
@@ -195,12 +197,16 @@
 <p> </p>
 <h4 id="discord-bot-integration">Discord Bot integration</h4>
 <p>I go a step further to enabling my Discord bot to respond to requests for a server. Not only that but it will give the user very useful information about the server and how to use it. Putting the docs right in front of them. Of course I'm using my own <a href="https://github.com/ns-phennessy/Arcbot">Discord bot library</a> for this.</p>
-<figure class="post__image"><img loading="lazy"  src="https://patcave.me/media/posts/1/serveme-2.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/1/responsive/serveme-2-xs.png 300w ,https://patcave.me/media/posts/1/responsive/serveme-2-sm.png 480w ,https://patcave.me/media/posts/1/responsive/serveme-2-md.png 768w ,https://patcave.me/media/posts/1/responsive/serveme-2-lg.png 1024w ,https://patcave.me/media/posts/1/responsive/serveme-2-xl.png 1360w ,https://patcave.me/media/posts/1/responsive/serveme-2-2xl.png 1600w"  alt="" width="979" height="490"></figure>
+<div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="1">
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/1/gallery/serveme-2-md.png" data-size="768x384"><img loading="lazy" src="https://patcave.me/media/posts/1/gallery/serveme-2-md-thumbnail.png" alt="" width="720" height="360"></a></figure>
+</div></div>
 <p><em>Source code</em>: <a href="https://github.com/scrims-tf/discord-bot-plugins">scrims-tf/discord-bot-plugins</a></p>
 <p> </p>
 <h4 id="monitoring">Monitoring</h4>
 <p>Not only <em>that</em>; but it also automatically sends data to my <a href="https://www.influxdata.com/time-series-platform/">monitoring stack</a></p>
-<figure class="post__image"><img loading="lazy"  src="https://patcave.me/media/posts/1/tf2mon.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/1/responsive/tf2mon-xs.png 300w ,https://patcave.me/media/posts/1/responsive/tf2mon-sm.png 480w ,https://patcave.me/media/posts/1/responsive/tf2mon-md.png 768w ,https://patcave.me/media/posts/1/responsive/tf2mon-lg.png 1024w ,https://patcave.me/media/posts/1/responsive/tf2mon-xl.png 1360w ,https://patcave.me/media/posts/1/responsive/tf2mon-2xl.png 1600w"  alt="" width="1324" height="683"></figure>
+<div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="1">
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/1/gallery/tf2mon-md.png" data-size="768x396"><img loading="lazy" src="https://patcave.me/media/posts/1/gallery/tf2mon-md-thumbnail.png" alt="" width="720" height="371"></a></figure>
+</div></div>
 <p>My monitoring stack will send me alerts (also in Discord) when..</p>
 <ul>
 <li>High player count</li>
@@ -348,7 +354,7 @@
         <link href="https://patcave.me/graduation/"/>
         <id>https://patcave.me/graduation/</id>
 
-        <updated>2022-01-25T22:48:34-07:00</updated>
+        <updated>2022-01-27T00:38:41-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/6/Columns_Jesse-10.jpg" alt="" />
