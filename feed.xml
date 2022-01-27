@@ -3,23 +3,23 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-01-27T00:38:41-07:00</updated>
+    <updated>2022-01-27T02:07:23-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
     <id>https://patcave.me</id>
 
     <entry>
-        <title>I&#x27;m officially a &quot;professional&quot; level designer!</title>
+        <title>I&#x27;m officially a &quot;professional&quot; game designer!</title>
         <author>
             <name>Patrick Hennessy</name>
         </author>
-        <link href="https://patcave.me/i-am-officially-a-professional-level-designer/"/>
-        <id>https://patcave.me/i-am-officially-a-professional-level-designer/</id>
+        <link href="https://patcave.me/i-am-officially-a-professional-game-designer/"/>
+        <id>https://patcave.me/i-am-officially-a-professional-game-designer/</id>
             <category term="Level Design"/>
             <category term="Gaming"/>
 
-        <updated>2022-01-27T00:32:44-07:00</updated>
+        <updated>2022-01-27T02:07:23-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/5/Pd_farmageddon.png" alt="" />
@@ -235,15 +235,15 @@
         </content>
     </entry>
     <entry>
-        <title>What I learned from making a Python chatbot</title>
+        <title>What I learned from making a Discord bot from scratch</title>
         <author>
             <name>Patrick Hennessy</name>
         </author>
-        <link href="https://patcave.me/what-i-learned-from-making-a-python-chatbot/"/>
-        <id>https://patcave.me/what-i-learned-from-making-a-python-chatbot/</id>
+        <link href="https://patcave.me/what-i-learned-from-making-a-discord-bot-from-scratch/"/>
+        <id>https://patcave.me/what-i-learned-from-making-a-discord-bot-from-scratch/</id>
             <category term="Programming Stuff"/>
 
-        <updated>2022-01-25T22:12:10-07:00</updated>
+        <updated>2022-01-27T02:07:13-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/2/cover-1.png" alt="" />
