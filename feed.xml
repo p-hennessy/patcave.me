@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-01-29T15:34:40-07:00</updated>
+    <updated>2022-01-29T15:44:05-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -17,7 +17,7 @@
         <link href="https://patcave.me/my-choice-tools-for-cloud-engineering/"/>
         <id>https://patcave.me/my-choice-tools-for-cloud-engineering/</id>
 
-        <updated>2022-01-29T15:33:23-07:00</updated>
+        <updated>2022-01-29T15:44:05-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/10/cover-2.png" alt="" />
@@ -269,18 +269,18 @@
 <h2>Cloud Provider: <em>Too difficult to say</em></h2>
 <p>Haha didn't expect that one did you?</p>
 <p>I feel like this is very dependent on the task. Obviously I like any provider that has integration with other tools I mentioned. So ill just talk briefly about the one's I've used.</p>
-<h5><a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">AWS</a></h5>
+<h3><a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">AWS</a></h3>
 <figure class="post__image post__image--left"><img loading="lazy"  src="https://patcave.me/media/posts/10/eeYUFCO.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/10/responsive/eeYUFCO-xs.png 300w ,https://patcave.me/media/posts/10/responsive/eeYUFCO-sm.png 480w ,https://patcave.me/media/posts/10/responsive/eeYUFCO-md.png 768w ,https://patcave.me/media/posts/10/responsive/eeYUFCO-lg.png 1024w ,https://patcave.me/media/posts/10/responsive/eeYUFCO-xl.png 1360w ,https://patcave.me/media/posts/10/responsive/eeYUFCO-2xl.png 1600w"  alt="" width="128" height="128"></figure>The biggest player in this space and by far the most features and services, most of which I don't generally use. AWS's core things work very well, but one thing I don't like about AWS is how a lot of the newer tools feel kind of thrown together and often have a lot of problems actually using them. As with their UI, the experience of the developer feels like an afterthought a lot of the time. </p>
 <p>AWS is the only one I've used that has a robust virtual networking offering which is huge for any company trying to do basic network security. And on the subject of security; IAM permissions are a horrendous pain to use, especially if you're not familiar with all the in's and outs of how it works; though no other provider does it any better.</p>
 <p>AWS is also by far the most expensive one here. For hobby projects, it's a bit costly unless you really do a good job with cost management. AWS also makes it easy to spend way more than you expect and you need dedicated engineers to pay attention to this kind of thing.</p>
 <p>For business uses, I think AWS is the clear choice.</p>
-<h5><a href="https://cloud.google.com/" target="_blank" rel="noopener noreferrer">Google Cloud</a></h5>
+<h3><a href="https://cloud.google.com/" target="_blank" rel="noopener noreferrer">Google Cloud</a></h3>
 <figure class="post__image post__image--left"><img loading="lazy"  src="https://patcave.me/media/posts/10/Google-Cloud-Platform-GCP-logo.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/10/responsive/Google-Cloud-Platform-GCP-logo-xs.png 300w ,https://patcave.me/media/posts/10/responsive/Google-Cloud-Platform-GCP-logo-sm.png 480w ,https://patcave.me/media/posts/10/responsive/Google-Cloud-Platform-GCP-logo-md.png 768w ,https://patcave.me/media/posts/10/responsive/Google-Cloud-Platform-GCP-logo-lg.png 1024w ,https://patcave.me/media/posts/10/responsive/Google-Cloud-Platform-GCP-logo-xl.png 1360w ,https://patcave.me/media/posts/10/responsive/Google-Cloud-Platform-GCP-logo-2xl.png 1600w"  alt="" width="128" height="128"></figure>I think the biggest thing GCP has going for it is that it's UI feels "designed" and like it's not programmatically generated. </p>
 <p>I had used GCP for a while with my <a href="https://patcave.me/automate-all-the-things/" target="_blank" rel="noopener noreferrer">Team Fortress 2 servers</a>, but ultimately ended up moving to AWS because of the lack of features for VM management and their API wasn't quite as simple to integrate with as AWS (GCP has no equivalent to <a href="https://aws.amazon.com/sdk-for-python/" target="_blank" rel="noopener noreferrer">boto3</a>)</p>
 <p>GCP's user permissions are also way more byzantine than I expected, and is somehow more confusing to me than AWS IAM. I can't I'm going to say this sentence: I'd rather use AWS IAM over GCP's permissions.</p>
 <p>They offer a similar suite of features to that of AWS, and is a serious contender for business use cases.</p>
 <p>On the subject of cost, GCP has way better cost estimation tools and they tell you the price before you stand something up in their UI; something AWS just simply does not do. Though that said, most of the time I'm standing up infrastructure programmatically so I don't really see this kind of thing often.</p>
-<h5><a href="https://www.vultr.com/" target="_blank" rel="noopener noreferrer">Vultr</a></h5>
+<h3><a href="https://www.vultr.com/" target="_blank" rel="noopener noreferrer">Vultr</a></h3>
 <figure class="post__image post__image--left"><img loading="lazy"  src="https://patcave.me/media/posts/10/grmuy1fs409mjcg3xrqs.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/10/responsive/grmuy1fs409mjcg3xrqs-xs.png 300w ,https://patcave.me/media/posts/10/responsive/grmuy1fs409mjcg3xrqs-sm.png 480w ,https://patcave.me/media/posts/10/responsive/grmuy1fs409mjcg3xrqs-md.png 768w ,https://patcave.me/media/posts/10/responsive/grmuy1fs409mjcg3xrqs-lg.png 1024w ,https://patcave.me/media/posts/10/responsive/grmuy1fs409mjcg3xrqs-xl.png 1360w ,https://patcave.me/media/posts/10/responsive/grmuy1fs409mjcg3xrqs-2xl.png 1600w"  alt="" width="128" height="97"></figure>I like Vultr. It's simple. They have a lot of good locations in the US, which is great for me as someone who hosts game servers. </p>
 <p>They obviously don't have nearly as many features as AWS or GCP, but they knock their VM stuff out of the park. Infact you can literally upload your own .iso to it and just run that; opening up the possibility of doing local builds and just sharing an .iso. They also have Windows VM's if you need that kind of thing.</p>
 <p>They have recently added an S3-compatible "spaces" offering which I'm using to good effect for TF2maps static sites. It's not fully flushed out though, so I'll hold my judgement on it for now.</p>
@@ -292,7 +292,7 @@
 <li>Managed databases</li>
 </ul>
 <p>A few years ago I had a lot of networking issues hosting game servers, which has turned me off from using them. It appears that this is no longer a problem given we're running almost entirely on Vultr at TF2Maps.</p>
-<h5><a href="https://www.digitalocean.com/" target="_blank" rel="noopener noreferrer">DigitalOcean</a></h5>
+<h3><a href="https://www.digitalocean.com/" target="_blank" rel="noopener noreferrer">DigitalOcean</a></h3>
 <figure class="post__image post__image--left"><img loading="lazy"  src="https://patcave.me/media/posts/10/1200px-DigitalOcean_logo.svg.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/10/responsive/1200px-DigitalOcean_logo.svg-xs.png 300w ,https://patcave.me/media/posts/10/responsive/1200px-DigitalOcean_logo.svg-sm.png 480w ,https://patcave.me/media/posts/10/responsive/1200px-DigitalOcean_logo.svg-md.png 768w ,https://patcave.me/media/posts/10/responsive/1200px-DigitalOcean_logo.svg-lg.png 1024w ,https://patcave.me/media/posts/10/responsive/1200px-DigitalOcean_logo.svg-xl.png 1360w ,https://patcave.me/media/posts/10/responsive/1200px-DigitalOcean_logo.svg-2xl.png 1600w"  alt="" width="128" height="128"></figure>Very similar to Vultr, and similarly I do like DigitalOcean for the same reasons. Their networking is more mature and they do have a database offering as well. They recently launched an Apps feature, which as far as I can tell is basically just <a href="https://www.heroku.com/" target="_blank" rel="noopener noreferrer">Heroku</a>.</p>
 <p> </p>
 <p>If DigitalOcean added the features i mentioned in the Vultr section, I'd happily switch to them. They have the managed DB part down.</p>
