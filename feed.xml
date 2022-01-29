@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-01-29T16:16:47-07:00</updated>
+    <updated>2022-01-29T16:17:48-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -17,7 +17,7 @@
         <link href="https://patcave.me/my-choice-tools-for-cloud-engineering/"/>
         <id>https://patcave.me/my-choice-tools-for-cloud-engineering/</id>
 
-        <updated>2022-01-29T16:16:47-07:00</updated>
+        <updated>2022-01-29T16:17:48-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/10/cover-2.png" alt="" />
@@ -305,6 +305,7 @@
 <li><a href="https://github.com/tmux/tmux/wiki" target="_blank" rel="noopener noreferrer">tmux</a> - Great for running some services in the background without losing access to the command line. Also great for doing multiple tasks on a VM at the same time</li>
 <li><a href="https://stedolan.github.io/jq/" target="_blank" rel="noopener noreferrer">jq</a> - An attempt to make JSON parsing work in bash without crazy awk, sed and grep pipelines.</li>
 <li><a href="https://www.figma.com/" target="_blank" rel="noopener noreferrer">Figma </a>- A free UI prototyping tool. Mostly I've used this as a way to show a more tangible face to some of the backend things I want to do at TF2Maps.</li>
+<li><a href="https://www.lucidchart.com/pages/">LucidCharts</a> - Great for making infrastructure diagrams</li>
 </ul>
 <hr>
 <h2>These are <em>just </em>tools</h2>
