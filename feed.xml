@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-01-28T20:59:05-07:00</updated>
+    <updated>2022-01-28T22:24:02-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -104,12 +104,12 @@
         <author>
             <name>Patrick Hennessy</name>
         </author>
-        <link href="https://patcave.me/monitoring-gameservers-with-grafana/"/>
-        <id>https://patcave.me/monitoring-gameservers-with-grafana/</id>
+        <link href="https://patcave.me/game-server-monitoring/"/>
+        <id>https://patcave.me/game-server-monitoring/</id>
             <category term="Programming Stuff"/>
             <category term="Gaming"/>
 
-        <updated>2022-01-28T20:58:31-07:00</updated>
+        <updated>2022-01-28T22:24:02-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/9/Screenshot_1.png" alt="" />
@@ -180,8 +180,8 @@
 <pre><span style="text-decoration: underline;"><em><strong>srcds_exporter.yml</strong></em></span><br><br>---<br>options:<br>  rcontimeout: 60s<br>  cachetimeout: 15s<br>servers:<br>  us.tf2maps.net:<br>    address: 172.93.228.253:27015<br>    rconpassword: ***password***</pre>
 <hr>
 <h2>Logging Admin Actions</h2>
-<p>TF2 servers often modding platforms that come with an ecosystem of plugins for doing administrative actions. One very popular platform is called <a href="https://www.sourcemod.net/">SourceMod</a>. Many of the built-in plugins will log important information like administrator actions to a log file that I can parse. Obviously logs are not like metrics that can be measured every minute, log files get new lines at random intervals, so it requires a different tool.</p>
-<p>Thankfully, Prometheus has an answer to this! In order to scrape logs you have to run another service called <a href="https://grafana.com/oss/loki/">Loki</a>, which is advertised as "Prometheus but for logs". </p>
+<p>TF2 servers often run modding platforms that come with an ecosystem of plugins for doing administrative actions. One very popular platform is called <a href="https://www.sourcemod.net/">SourceMod</a>. Many of the built-in plugins will log important information like administrator actions to a log file that I can parse. Obviously logs are not like metrics that can be measured every minute, log files get new lines at random intervals, so it requires a different tool.</p>
+<p>Thankfully, Prometheus has an answer to this! In order to scrape logs you have to run another service called <a href="https://grafana.com/oss/loki/">Loki</a>, which is advertised as "Prometheus but for logs". Grafana Cloud's free tier also comes with Loki access. Awesome!</p>
 <p>To actually export to Loki, you need to run a Prometheus style exporter called <a href="https://grafana.com/docs/loki/latest/clients/promtail/">Promtail</a>. </p>
 <p>Now, most people who know me know that I'm a wizard with <a href="https://en.wikipedia.org/wiki/Regular_expression">Regular Expressions</a>, though admittedly this one took me a while to get right. Whoever created this log format clearly did not intend for it to be parsed. (Aside: Lea Verou has a great <a href="http://projects.verou.me/regexplained/">RegEx testing tool</a> that I highly recommend for this kind of task.)</p>
 <p>Below is the full config I used to parse the SourceMod log files. (I would have really preferred JSON, but SourceMod has been around since before JSON was a thing)</p>
@@ -202,7 +202,8 @@
 <figure class="gallery__item"><a href="https://patcave.me/media/posts/9/gallery/Screenshot_6.png" data-size="1193x830"><img loading="lazy" src="https://patcave.me/media/posts/9/gallery/Screenshot_6-thumbnail.png" alt="" width="720" height="501"></a></figure>
 </div></div>
 <p>The panel that gave me the most trouble was the "Map activity" panel.</p>
-<p><span style="font-size: 18.4px; color: var(--text-editor-body-color); font-family: var(--font-base); font-weight: var(--font-weight-normal);">It is intended to show the history of the maps played. To get this to work, I had to use the deprecated version of their Graph panel, and setup a transform that converts a Prometheus label to the legend of the graph. If that sounds confusing, that's because it is. I basically monte carlo'd it into working.  ¯\_(ツ)_/¯</span></p>
+<p>It is intended to show the history of the maps played. To get this to work, I had to use the deprecated version of their Graph panel, and setup a transform that converts a Prometheus label to the legend of the graph. If that sounds confusing, that's because it is. I basically monte carlo'd it into working.</p>
+<p> ¯\_(ツ)_/¯</p>
 <div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="3">
 <figure class="gallery__item"><a href="https://patcave.me/media/posts/9/gallery/Screenshot_5.png" data-size="451x197"><img loading="lazy" src="https://patcave.me/media/posts/9/gallery/Screenshot_5-thumbnail.png" alt="" width="451" height="197"></a></figure>
 </div></div>
@@ -220,14 +221,14 @@
 <li>The server is idle <em>way</em> too much. Ad-hoc servers would solve this problem</li>
 <li>Our bandwidth is higher than I expected
 <ul>
-<li>could be optimized by not having to keep a copy of a map on each server, but instead share a file system using something like EFS</li>
+<li>Could be optimized by not having to keep a copy of a map on each server, but instead share a file system using something like EFS</li>
 </ul>
 </li>
 <li>We're overprovisioned on CPU, RAM and Disk
 <ul>
-<li>We never go above 10% cpu use, and we have 2 core available. A single core vm should be more than enough.</li>
+<li>We never go above 10% cpu use, and we have 2 cores available. A VM with a single core should be more than enough.</li>
 <li>RAM use can get high at times, but that is a function of us running 2 srcds servers on the same VM. We could happily cut the provisioned RAM in half and be fine</li>
-<li>We just don't need a huge disk. We can do a better job of clearing out .dem files (game recordings) and clean out maps after they're been played in our map tests. Disks are fairly cheap though I suppose</li>
+<li>We just don't need a huge disk. We can do a better job of clearing out <code>.dem</code> files (game recordings) and clean out maps after they're been played in our map tests. Disks are fairly cheap though I suppose</li>
 </ul>
 </li>
 </ul>
@@ -235,14 +236,14 @@
 <h2>Alerting?</h2>
 <figure class="post__image post__image--left"><img loading="lazy"  src="https://patcave.me/media/posts/9/Screenshot_7.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/9/responsive/Screenshot_7-xs.png 300w ,https://patcave.me/media/posts/9/responsive/Screenshot_7-sm.png 480w ,https://patcave.me/media/posts/9/responsive/Screenshot_7-md.png 768w ,https://patcave.me/media/posts/9/responsive/Screenshot_7-lg.png 1024w ,https://patcave.me/media/posts/9/responsive/Screenshot_7-xl.png 1360w ,https://patcave.me/media/posts/9/responsive/Screenshot_7-2xl.png 1600w"  alt="" width="315" height="253"></figure>
 <p>Now that I'm tracking this information, can I meaningfully alert off of it?</p>
-<p>Prometheus does have a tool called <a href="https://prometheus.io/docs/alerting/latest/alertmanager/">AlertManager</a> for this task, but I must say this tool is very clunky to use. I was able to get alerts working and publishing to our <a href="https://discord.com/">Discord</a> server.</p>
+<p>Prometheus does have a tool called <a href="https://prometheus.io/docs/alerting/latest/alertmanager/">AlertManager</a> for this task, but I must say this tool is very clunky to use, but even so I was able to get alerts working and publishing to our <a href="https://discord.com/">Discord</a> server.</p>
 <p> </p>
-<p>My big complaint with it is that you have to basically have a graph that is specifically to be alarmed off of. It runs the query every X minutes and checks for the criteria of say like CPU over 80%. Then it should fire off to the channel. </p>
+<p>My big complaint with it is that you have to have a graph that is specific to a metric and setup as an "alarm graph" in order to alarm off of. In other words, I can't use my existing panels because alert manager doesn't like the <code>$host</code> filter. So I have to make a new dashboard just for alerts. </p>
 <p>There is a big lack of customization for the data it shares with Discord and doesn't do a great job of keeping users informed when an alarm clears or is "acked". Also testing the whole alarming setup is really difficult and slow. It does feel like it was designed for a specific team and use case.</p>
 <p>Honestly I'm probably better off using PagerDuty, but I'm not sure how to actually get the data out of Prometheus and into PagerDuty. </p>
 <hr>
 <h2>In summation</h2>
-<p>I have to say that I am quite pleasantly surprised at how easy this all was to get setup with. Prometheus and Grafana both have done a great job with their documentation and designing their tools for engineers. However their alerting solution could use some work in my opinion. </p>
+<p>I have to say that I am pleasantly surprised at how easy this all was to get setup with. Prometheus and Grafana both have done a great job with their documentation and designing their tools for engineers. However their alerting solution could use some work in my opinion. </p>
 <p>I'm happy with this level of success in this small effort because it's a prototype for things I may possibly bring into my work one day. </p>
 <p>There is a synergy in solving problems for TF2Maps. Often at work I don't get as many opportunities as I like to just experiment with new tools. It make sense why we don't just constantly prototype new tools, but in doing so we do sometimes miss valuable setup's like this. </p>
 <p>I would absolutely recommend the Prometheus + Loki + Grafana stack for anyone running game servers, not just Source servers.</p>
