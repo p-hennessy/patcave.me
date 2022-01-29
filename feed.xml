@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-01-29T15:44:05-07:00</updated>
+    <updated>2022-01-29T16:16:47-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -17,7 +17,7 @@
         <link href="https://patcave.me/my-choice-tools-for-cloud-engineering/"/>
         <id>https://patcave.me/my-choice-tools-for-cloud-engineering/</id>
 
-        <updated>2022-01-29T15:44:05-07:00</updated>
+        <updated>2022-01-29T16:16:47-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/10/cover-2.png" alt="" />
@@ -64,13 +64,13 @@
 </tbody>
 </table>
 <p>Admittedly I am a bit biased because the only other tool in this space I've used is CloudFormation, which works well for small use cases but quickly becomes unmanageable when you have a fast changing dynamic environment like the cloud.</p>
-<p>In my mind, the 3 big players for IaC are: <em>CloudFormation </em>, <em>Terraform </em>and <em>Pulumi</em>. The way I like to think about it is a spectrum where CloudFormation being the most "declarative" while Pulumi is almost literally just a library in a programming language. Terraform leans towards being declarative but has much better support for things like conditionals, loops, variables, passing data between modules and other programming language paradigms.</p>
+<p>In my mind, the 3 big players for IaC are: <em><a href="https://aws.amazon.com/cloudformation/" target="_blank" rel="noopener noreferrer">CloudFormation</a></em>, <em>Terraform </em>and <em><a href="https://www.pulumi.com/" target="_blank" rel="noopener noreferrer">Pulumi</a></em>. The way I like to think about it is a spectrum where CloudFormation being the most "declarative" while Pulumi is almost literally just a library in a programming language. Terraform leans towards being declarative but has much better support for things like conditionals, loops, variables, passing data between modules and other programming language paradigms.</p>
 <figure class="post__image post__image--center"><img loading="lazy"  src="https://patcave.me/media/posts/10/spectrum.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/10/responsive/spectrum-xs.png 300w ,https://patcave.me/media/posts/10/responsive/spectrum-sm.png 480w ,https://patcave.me/media/posts/10/responsive/spectrum-md.png 768w ,https://patcave.me/media/posts/10/responsive/spectrum-lg.png 1024w ,https://patcave.me/media/posts/10/responsive/spectrum-xl.png 1360w ,https://patcave.me/media/posts/10/responsive/spectrum-2xl.png 1600w"  alt="" width="1576" height="496"></figure>
 <p> </p>
 <hr>
 <h2>Configuration Management: <em><a href="https://www.ansible.com/" target="_blank" rel="noopener noreferrer">Ansible</a></em></h2>
 <figure class="post__image post__image--left"><img loading="lazy"  src="https://patcave.me/media/posts/10/Ansible_logo.svg.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/10/responsive/Ansible_logo.svg-xs.png 300w ,https://patcave.me/media/posts/10/responsive/Ansible_logo.svg-sm.png 480w ,https://patcave.me/media/posts/10/responsive/Ansible_logo.svg-md.png 768w ,https://patcave.me/media/posts/10/responsive/Ansible_logo.svg-lg.png 1024w ,https://patcave.me/media/posts/10/responsive/Ansible_logo.svg-xl.png 1360w ,https://patcave.me/media/posts/10/responsive/Ansible_logo.svg-2xl.png 1600w"  alt="" width="156" height="192"></figure>
-<p>Ansible allows one to codify the steps to provisioning a virtual machine or a docker image, allowing one to reproduce their configuration whenever needed.</p>
+<p>Ansible allows one to codify the steps to provisioning a virtual machine or a Docker image, allowing one to reproduce their configuration whenever needed.</p>
 <p> </p>
 <p> </p>
 <table style="border-collapse: collapse; width: 100%; border-style: hidden;" border="0">
