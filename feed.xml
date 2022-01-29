@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-01-28T17:00:33-07:00</updated>
+    <updated>2022-01-28T17:10:20-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -109,7 +109,7 @@
             <category term="Level Design"/>
             <category term="Gaming"/>
 
-        <updated>2022-01-28T17:00:33-07:00</updated>
+        <updated>2022-01-28T17:10:20-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/8/franklin-rell-materialvol22.jpg" alt="" />
@@ -322,7 +322,7 @@
 </table>
 <hr>
 <h2>Crazy Stuff Expert Artists have Made</h2>
-<p>These all blow my mind that it's possible to do this all procedurally but here we are. I feel very inadequate compared to these guys, but then again they're all professionals. I do think admiring art of people who are better than you at it is a great way to learn and inspire.</p>
+<p>These all blow my mind that it's possible to do this all procedurally but here we are. I feel very inadequate compared to these guys, but then again they're all professionals. I do think admiring art of people who are better than you at it is a great way to learn and inspire. I'll also say that all of these look way more impressive because they have the benefit of using height maps, which makes it look a lot better than the flat stuff I do, but as said before, I can't use height because TF2's Source Engine branch does not support it unfortunately. Nonetheless these are all very impressive.</p>
 <div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="4">
 <figure class="gallery__item"><a href="https://patcave.me/media/posts/8/gallery/daniel-thiger-spagetthi-sphere-b.jpg" data-size="1920x1920"><img loading="lazy" src="https://patcave.me/media/posts/8/gallery/daniel-thiger-spagetthi-sphere-b-thumbnail.jpg" alt="" width="720" height="720"></a>
 <figcaption>https://www.artstation.com/artwork/gJV9bL</figcaption>
