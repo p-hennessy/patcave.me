@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-01-29T16:17:48-07:00</updated>
+    <updated>2022-02-02T15:32:46-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -17,7 +17,7 @@
         <link href="https://patcave.me/my-choice-tools-for-cloud-engineering/"/>
         <id>https://patcave.me/my-choice-tools-for-cloud-engineering/</id>
 
-        <updated>2022-01-29T16:17:48-07:00</updated>
+        <updated>2022-02-02T15:32:46-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/10/cover-2.png" alt="" />
@@ -191,10 +191,12 @@
 <li><a href="https://fastapi.tiangolo.com/" target="_blank" rel="noopener noreferrer">FastAPI</a></li>
 <li><a href="https://pydantic-docs.helpmanual.io/" target="_blank" rel="noopener noreferrer">Pydantic</a></li>
 <li><a href="https://jinja.palletsprojects.com/" target="_blank" rel="noopener noreferrer">Jinja2</a></li>
-<li><a href="https://collerek.github.io/ormar/" target="_blank" rel="noopener noreferrer">ormar</a></li>
+<li><a href="https://collerek.github.io/ormar/" target="_blank" rel="noopener noreferrer">ormar</a> or <a href="https://roman-right.github.io/beanie/">beanie</a><a href="#INTERNAL_LINK#/post/null" target="_blank" rel="noopener noreferrer"></a></li>
 <li><a href="https://www.paramiko.org/" target="_blank" rel="noopener noreferrer">paramiko</a></li>
 <li><a href="https://docs.python-requests.org/" target="_blank" rel="noopener noreferrer">requests</a> or <a href="https://www.python-httpx.org/" target="_blank" rel="noopener noreferrer">httpx</a> (async)</li>
 <li><a href="https://rich.readthedocs.io/en/stable/introduction.html" target="_blank" rel="noopener noreferrer">rich</a></li>
+<li><a href="https://python-prompt-toolkit.readthedocs.io/en/master/" target="_blank" rel="noopener noreferrer">PromptToolkit</a></li>
+<li><a href="https://github.com/Delgan/loguru" target="_blank" rel="noopener noreferrer">loguru</a></li>
 </ul>
 <hr>
 <h2>Monitoring: <em><a href="https://prometheus.io/" target="_blank" rel="noopener noreferrer">Prometheus</a> + <a href="https://grafana.com/" target="_blank" rel="noopener noreferrer">Grafana</a></em></h2>
@@ -306,6 +308,7 @@
 <li><a href="https://stedolan.github.io/jq/" target="_blank" rel="noopener noreferrer">jq</a> - An attempt to make JSON parsing work in bash without crazy awk, sed and grep pipelines.</li>
 <li><a href="https://www.figma.com/" target="_blank" rel="noopener noreferrer">Figma </a>- A free UI prototyping tool. Mostly I've used this as a way to show a more tangible face to some of the backend things I want to do at TF2Maps.</li>
 <li><a href="https://www.lucidchart.com/pages/">LucidCharts</a> - Great for making infrastructure diagrams</li>
+<li><a href="https://github.com/duo-labs/cloudtracker" target="_blank" rel="noopener noreferrer">CloudTracker </a>- A great tool for creating least priveledge IAM permissions</li>
 </ul>
 <hr>
 <h2>These are <em>just </em>tools</h2>
