@@ -1,0 +1,586 @@
+<!doctype html><html amp lang="en-us"><head><meta charset="utf-8"><title>TF2Maps Infrastructure Overhaul Project - The Patcave</title><meta name="description" content="I have been Technical Staff at TF2Maps.net for about a year as of writing this. One of the big things that bothered me when I first got onboard was how disorganized and chaotic the state of the infrastructure was. There wasn't a lot of it&hellip;"><link rel="canonical" href="https://patcave.me/tf2maps-infrastructure-overhaul-project/"><meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1"><link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet" type="text/css"><script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script><script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script><script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script><script async custom-element="amp-video" src="https://cdn.ampproject.org/v0/amp-video-0.1.js"></script><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://patcave.me/amp/tf2maps-infrastructure-overhaul-project/"},"headline":"TF2Maps Infrastructure Overhaul Project","datePublished":"2022-03-15T19:53","dateModified":"2022-04-21T04:05","image":{"@type":"ImageObject","url":"https://patcave.me/media/posts/12/blueprints.png","height":1080,"width":1920},"description":"I have been Technical Staff at TF2Maps.net for about a year as of writing this. One of the big things that bothered me when I first got onboard was how disorganized and chaotic the state of the infrastructure was. There wasn't a lot of it&hellip;","author":{"@type":"Person","name":"Patrick Hennessy"},"publisher":{"@type":"Organization","name":"Patrick Hennessy"}}</script><style amp-custom>article,
+aside,
+footer,
+header,
+hgroup,
+main,
+nav,
+section {
+  display: block; }
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0; }
+
+li {
+  list-style: none; }
+
+amp-img {
+  max-width: 100%; }
+
+button,
+input,
+select,
+textarea {
+  font: inherit; }
+
+html {
+  font-size: 1rem; }
+
+body {
+  background: #f1f1f1;
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  line-height: 1.6; }
+
+a {
+  color:  #039be5;
+  text-decoration: none;
+  -webkit-transition: all 0.12s linear 0s;
+  -o-transition: all 0.12s linear 0s;
+  transition: all 0.12s linear 0s; }
+
+a:hover {
+  color: #262626;
+  text-decoration: underline;
+  -webkit-text-decoration-skip: ink;
+  text-decoration-skip: ink; }
+
+a:active {
+  color: #262626; }
+
+a:focus {
+  outline: 2px dotted #039be5; }
+
+figure,
+blockquote,
+p,
+ul,
+ol,
+dl,
+table,
+hr,
+fieldset {
+  margin-top: 1.6rem; }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-top: 2.13333rem; }
+
+h1 {
+  font-size: 1.67583rem;
+  font-weight: normal; }
+
+h2 {
+  font-size: 1.4729rem; }
+
+h3 {
+  font-size: 1.29454rem; }
+
+h4 {
+  font-size: 1.13778rem; }
+
+h5 {
+  font-size: 1rem; }
+
+h6 {
+  font-size: 0.87891rem; }
+
+h2 + p,
+h3 + p,
+h4 + p,
+h5 + p,
+h6 + p {
+  margin-top: 0.8rem; }
+
+b,
+strong {
+  font-weight: 600; }
+
+blockquote {
+  color: #6c7175;
+  font-family: "Droid Serif", "Times", "Source Serif Pro", serif;
+  font-style: italic;
+  padding: 1.33333rem 0.53333rem 1.33333rem 3.2rem;
+  position: relative; }
+  blockquote:before {
+    display: block;
+    content: "\201C";
+    font-size: 4.41226rem;
+    position: absolute;
+    left: 0;
+    top: -12px;
+    color: rgba(108, 113, 117, 0.5); }
+  blockquote > :nth-child(1) {
+    margin-top: 0; }
+
+ul,
+ol {
+  margin-left: 2rem; }
+  ul > li,
+  ol > li {
+    list-style: inherit;
+    padding: 0 0 0.26667rem 0.26667rem; }
+
+dl dt {
+  color: #262626;
+  font-weight: 600; }
+
+code,
+pre {
+  background-color: #f1f1f1;
+  font-family: monospace; }
+
+pre {
+  margin: 1.6rem 0 0;
+  padding: 1.6rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto; }
+  pre > code {
+    color: #262626;
+    padding: 0; }
+
+code {
+  border-radius: 3px;
+  color: #262626;
+  padding: 0.26667rem 0.53333rem; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid #d4d4d4;
+  width: 100%;
+  overflow-x: auto;
+  vertical-align: top;
+  text-align: left;
+  white-space: nowrap; }
+  table th {
+    font-weight: 500;
+    padding: 0.53333rem 1.06667rem; }
+  table tr {
+    border-bottom: 1px solid #d4d4d4; }
+    table tr:nth-child(2n) {
+      background: #f1f1f1; }
+  table td {
+    padding: 0.53333rem 1.06667rem; }
+
+figcaption {
+  clear: both;
+  color: rgba(108, 113, 117, 0.6);
+  font-size: 0.82397rem;
+  margin: 0.8rem 0 0;
+  text-align: center; }
+
+sub,
+sup {
+  font-size: 65%; }
+
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+
+.btn, [type=button],
+[type=submit],
+button {
+  background: #039be5;
+  border: none;
+  border-radius: 2px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.87891rem;
+  font-weight: 500;
+  line-height: 1.9;
+  padding: 0.53333rem 1.33333rem;
+  text-align: center;
+  text-decoration: none;
+  -webkit-transition: all .15s ease;
+  -o-transition: all .15s ease;
+  transition: all .15s ease;
+  width: auto; }
+  .btn:hover, [type=button]:hover,
+  [type=submit]:hover,
+  button:hover {
+    background: #262626;
+    color: #ffffff; }
+  .btn:focus, [type=button]:focus,
+  [type=submit]:focus,
+  button:focus {
+    outline: none; }
+  .btn-outline {
+    border: 1px solid #ddd;
+    background: #ffffff;
+    border-radius: 3px;
+    color: #262626; }
+
+[type=button],
+[type=submit],
+button {
+  text-transform: uppercase;
+  -webkit-appearance: none;
+  -moz-appearance: none; }
+
+.navbar {
+  background: #039be5;
+  -webkit-box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  line-height: 3;
+  max-height: 4rem; }
+  .navbar > div {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    text-align: left;
+    max-width: 700px;
+    margin: 0 auto; }
+  .navbar a {
+    color: #ffffff;
+    text-decoration: none; }
+  .navbar-sidebar-toggle {
+    left: 0;
+    position: relative;
+    text-indent: -99999rem; }
+    .navbar-sidebar-toggle:before {
+      content: "";
+      display: block;
+      border-top: 0.375rem double #ffffff;
+      border-bottom: 0.125rem solid #ffffff;
+      height: 0.125rem;
+      position: absolute;
+      text-indent: 0;
+      top: 50%;
+      width: 1.3rem;
+      -webkit-transform: translate(0px, -50%);
+      -ms-transform: translate(0px, -50%);
+      transform: translate(0px, -50%); }
+
+
+.logo {
+            display: inline-block;
+  font-weight: 600;
+  line-height: 1;
+            margin: 0 auto;
+            height: 2rem;
+            text-indent: -9999px;
+            width: 240px;vertical-align: middle;
+        }
+        .logo.logo-text {
+            line-height: 2;
+            text-align: center;
+            text-indent: 0;
+        }
+
+amp-sidebar {
+  background: #ffffff;
+  width: 240px; }
+  amp-sidebar > ul {
+    margin: 0.8rem 0 0;
+    padding: 0; }
+    amp-sidebar > ul ul {
+      border-left: 1px solid #d4d4d4;
+      margin: 0.53333rem 0 0; }
+    amp-sidebar > ul li {
+      color: #262626;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      list-style: none;
+      line-height: 1.4;
+      padding: 0.42667rem 1.06667rem; }
+      amp-sidebar > ul li li {
+        font-weight: normal;
+        padding: 0.26667rem 0 0.26667rem 1.06667rem; }
+    amp-sidebar > ul a,
+    amp-sidebar > ul a:visited {
+      color: #262626; }
+
+.bg-white {
+  background: #ffffff; }
+
+.wrap-page {
+  max-width: 700px;
+  margin: 0 auto; }
+
+@media all and (max-width: 43.6875em) {
+  .wrap-inner {
+    padding: 0 6%; } }
+
+.page-title {
+  background: #ffffff;
+  -webkit-box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  margin-bottom: 0.8rem;
+  padding: 1.6rem 6%; }
+  .page-title > h1 {
+    margin: 0;
+    font-size: 1.29454rem; }
+  .page-title > p {
+    font-size: 0.87891rem;
+    color: #6c7175;
+    line-height: 1.3;
+    margin: 0.26667rem 0 0; }
+  .page-title-author {
+    border-radius: 50%;
+    float: left;
+    height: 2.5rem;
+    width: 2.5rem; }
+    .page-title-author + h1 {
+      margin-left: 3.5rem; }
+      .page-title-author + h1 + p {
+        margin-left: 3.5rem; }
+
+.card {
+  background: #ffffff;
+  -webkit-box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  margin-bottom: 0.8rem;
+  padding-bottom: 1.06667rem; }
+
+  .card-meta {
+    border-top: 1px solid #d4d4d4;
+    color: rgba(108, 113, 117, 0.6);
+    font-size: 0.7242rem;
+    font-weight: 500;
+    margin-top: 1.06667rem;
+    padding-top: 1.06667rem;
+    text-transform: uppercase; }
+    .card-meta a + time:before {
+      content: "";
+      background: #d4d4d4;
+      display: inline-block;
+      height: 3px;
+      margin: 0 8px;
+      width: 3px;
+      vertical-align: middle;
+      border-radius: 50%; }
+  .card-text {
+    font-size: 0.9375rem;
+    overflow: hidden;
+    padding: 0 6%; }
+    .card-text h2 {
+      font-size: 1.13778rem; }
+
+.post {
+  margin-bottom: 2.13333rem; }
+  .post-featured-image {
+    margin-top: 0;
+    position: relative; }
+    .post-featured-image > figcaption {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 3px;
+      color: #ffffff;
+      position: absolute;
+      bottom: 0.8rem;
+      padding: 0 0.26667rem;
+      right: 6%; }
+  .post-header {
+    margin-bottom: 2.13333rem; }
+  .post-meta {
+    border-bottom: 1px solid #d4d4d4;
+    color: rgba(108, 113, 117, 0.6);
+    font-size: 0.7242rem;
+    font-weight: 500;
+    margin-top: 1.06667rem;
+    padding-bottom: 1.06667rem;
+    text-transform: uppercase; }
+    .post-meta a + time:before {
+      content: "";
+      background: #d4d4d4;
+      display: inline-block;
+      height: 3px;
+      margin: 0 8px;
+      width: 3px;
+      vertical-align: middle;
+      border-radius: 50%; }
+  .post-tag {
+    margin: 0; }
+    .post-tag > li {
+      display: inline-block;
+      padding: 0; }
+      .post-tag > li a {
+        background: #f1f1f1;
+        border-radius: 2px;
+        color: #6c7175;
+        font-size: 0.77248rem;
+        display: inline-block;
+        margin: 0 0.26667rem 0.26667rem 0;
+        padding: 0.26667rem 0.53333rem; }
+        .post-tag > li a:hover {
+          background: #039be5;
+          color: #ffffff;
+          text-decoration: none; }
+  .post-share {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    margin-top: 1.6rem;
+    width: 100%; }
+    .post-share amp-social-share {
+      -webkit-box-flex: 1;
+      -ms-flex: 1 0 auto;
+      flex: 1 0 auto;
+      background-size: 24px; }
+  .post-scroll {
+    color: #ffffff;
+    background: #039be5;
+    bottom: 10px;
+    border-radius: 50%;
+    border: none;
+    -webkit-box-shadow: 0 1px 1.5px 0 rgba(38, 38, 38, 0.12), 0 1px 1px 0 rgba(38, 38, 38, 0.24);
+    box-shadow: 0 1px 1.5px 0 rgba(38, 38, 38, 0.12), 0 1px 1px 0 rgba(38, 38, 38, 0.24);
+    font-size: 1.13778rem;
+    height: 46px;
+    opacity: 0;
+    outline: none;
+    position: fixed;
+    padding: 0;
+    right: 4%;
+    visibility: hidden;
+    width: 46px;
+    z-index: 9999; }
+    .post-scroll-marker {
+      height: 0px;
+      position: absolute;
+      top: 100px;
+      width: 0px; }
+        .post-pagination {
+    background: #f1f1f1;
+    -webkit-box-shadow: inset 0 2px 3px rgba(38, 38, 38, 0.1);
+    box-shadow: inset 0 2px 3px rgba(38, 38, 38, 0.1);
+    border-top: 1px solid #d4d4d4;
+    padding: 1.06667rem 0; }
+    .post-pagination > div {
+      line-height: 1.2;
+      padding: 0.53333rem 1.06667rem;
+      text-align: center; }
+      .post-pagination > div span {
+        display: block;
+        color: #6c7175;
+        font-size: 0.7242rem;
+        font-weight: 500;
+        margin-bottom: 0.26667rem;
+        text-transform: uppercase; }
+    .post-pagination-prev a:before {
+      content: "\2190";
+      margin-right: 0.26667rem; }
+    .post-pagination-next a:after {
+      content: "\2192";
+      margin-left: 0.26667rem; }
+
+aside {
+  margin: 1.6rem 0 0; }
+
+.align-left {
+  text-align: left; }
+
+.align-right {
+  text-align: right; }
+
+.align-center {
+  text-align: center; }
+
+.align-justify {
+  text-align: justify; }
+
+.msg {
+  border-left: 2px solid transparent;
+  padding: 1.06667rem 1.06667rem; }
+  .msg--highlight {
+    background-color: #fff8e6;
+    border-color: #e2ac4f; }
+  .msg--info {
+    background: rgba(45, 97, 201, 0.03);
+    border-color: #039be5; }
+  .msg--success {
+    background: #f7fbf6;
+    border-color: #5ab44b; }
+  .msg--warning {
+    background: #fff3f3;
+    border-color: #c06367;
+    color: #a94442; }
+
+.dropcap:first-letter {
+  float: left;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 2.16943rem;
+  line-height: 0.7;
+  margin-right: 0.53333rem;
+  padding: 0.53333rem 0.53333rem 0.53333rem 0; }
+
+.pagination {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin: 0.8rem 0; }
+  .pagination > a {
+    padding-left: 0;
+    padding-right: 0;
+    width: 49%; }
+  .pagination-right {
+    margin-left: auto; }
+
+.bottom {
+  background: #039be5;
+  color: #ffffff;
+  padding: 1.06667rem 4%;
+  text-align: center; }
+
+    /*
+ * Put your custom CSS code here (it will be used only in the AMP mode)
+ */</style><style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript><script async src="https://cdn.ampproject.org/v0.js"></script><script custom-element="amp-animation" src="https://cdn.ampproject.org/v0/amp-animation-0.1.js" async></script><script custom-element="amp-position-observer" src="https://cdn.ampproject.org/v0/amp-position-observer-0.1.js" async></script></head><body class="bg-white"><nav class="navbar wrap-inner" id="top"><div><a on="tap:navbar-sidebar.toggle" class="navbar-sidebar-toggle" title="Menu">Menu</a> <a class="logo logo-text" href="https://patcave.me/amp/">The Patcave</a></div></nav><main class="wrap-page"><article class="post"><figure class="post-featured-image"><amp-img src="https://patcave.me/media/posts/12/blueprints.png" alt="" srcset="https://patcave.me/media/posts/12/responsive/blueprints-xs.png 300w ,https://patcave.me/media/posts/12/responsive/blueprints-sm.png 480w ,https://patcave.me/media/posts/12/responsive/blueprints-md.png 768w" sizes="(max-width: 768px) 100vw, 768px" height="1080" layout="responsive" width="1920"></amp-img></figure><div class="wrap-inner"><header class="post-header"><h1>TF2Maps Infrastructure Overhaul Project</h1><p class="post-meta"><time datetime="2022-03-15T19:53">March 15, 2022</time></p></header><p>I have been Technical Staff at <a href="https://tf2maps.net">TF2Maps.net</a> for about a year as of writing this. One of the big things that bothered me when I first got onboard was how disorganized and chaotic the state of the infrastructure was. There wasn't a lot of it but it was old and fragile, and soon to be some serious hardware issues that needed to be addressed.</p><hr><h2>Unexpected hardware failures</h2><p> </p><figure class="post__image post__image--right"><amp-img src="https://patcave.me/media/posts/12/download-1.jpg" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/download-1-xs.jpg 300w ,https://patcave.me/media/posts/12/responsive/download-1-sm.jpg 480w ,https://patcave.me/media/posts/12/responsive/download-1-md.jpg 768w ,https://patcave.me/media/posts/12/responsive/download-1-lg.jpg 1024w ,https://patcave.me/media/posts/12/responsive/download-1-xl.jpg 1360w ,https://patcave.me/media/posts/12/responsive/download-1-2xl.jpg 1600w" alt="" width="266" height="116" layout="responsive"></amp-img></figure><p>In November of 2021, we discovered that our <span>hardware was beginning to fail. We had been running a physical host out of a New York </span><a href="https://en.wikipedia.org/wiki/Colocation_centre">colo</a><span> for nearly 8 years.</span></p><p>Usually disks and power supplies have a life of ~2-4 years, so its impressive we made it was far as we did, though scary because I was afraid our hardware could fail at basically any time.</p><p>In trying to allocate more disk to one of our VM's, our hypervisor <a href="https://www.proxmox.com/en/">Proxmox</a> told us that it detected bad sectors. Super oh no. These disks we're <a href="https://en.wikipedia.org/wiki/Standard_RAID_levels" target="_blank" rel="noopener noreferrer">RAID 0</a>, meaning we had no actual redundancy.</p><p>Additionally, our colo contract expired in February of 2022, meaning we would need to move all of our systems over to something new with the quickness.</p><hr><h2>Lay of the land</h2><p>The very first thing I did was assess the problem at hand and determine the scope of what we will do about it.</p><h4>So the obvious question is, what needs to move?</h4><p>I went onto every VM we had and took a thorough look to get an accounting of everything we would need to move or replace.</p><p>There was a lot more than I expected:</p><ul><li>Bind9 DNS</li><li>Dovecot Email server</li><li>Apache with 22 distinct virtual hosts<ul><li>Many of which were just static html sites</li><li>One was the forum software</li><li>One was our custom built map queue site</li></ul></li><li>The Discord Bot</li><li>MySQL database</li><li>Almost 1TB of static attachment data on disk</li></ul><h4>Bills Bills Bills</h4><p>I also spoke with the incumbent system administrator about hosting cost; which I had found we were consistently spending more on hosting than we received in donations, and the difference came out of his pocket. Not great, and he defiantly was not happy with it.</p><p>After some research, I determined that we would likely need to upgrade our version of the <a href="https://xenforo.com/">Xenforo </a>fo<span>rum software. So I tasked one of my "interns" with going into Xenforo and evaluate every existing plugin we ran on the old site, and asses it's criticality (must have, nice to have, dont need), as </span><span>well as if we have a migration path for that plugin to Xenforo 2.</span></p><p><span>This research was critical to learning if this was even possible, or if we would need to look into other solutions.</span></p><p><span>Side note: Google</span><span> Sprea</span><span>dsheets are</span><span> great for this kind of ongoing collaboration:</span></p><div class="gallery-wrapper"><div class="gallery" data-is-empty="false" data-columns="1"><figure class="gallery__item"><a href="https://patcave.me/media/posts/12/gallery/Screenshot_774-3.png" data-size="920x666"><amp-img src="https://patcave.me/media/posts/12/gallery/Screenshot_774-3-thumbnail.png" alt="" width="720" height="521" layout="responsive"></amp-img></a></figure></div></div><hr><h2>Project Objectives</h2><ul><li>Have fully operational systems moved to new hardware before our colo contract expired</li><li>Reduce our hosting bill by at least 25%, but ideally as much as possible</li><li>Lower the maintenance overhead for all systems going forward</li><li>Bring us up to latest security best practices</li></ul><h3>Where to host it all?</h3><p>So the first order of business was to see what our hosting options could be. At a glance I figured we could leverage a cloud provider to replace a good amount of functionality for us, as well as possibly use S3 to host a lot of stuff for very cheap.</p><p>I put together a cost estimate for...</p><ul><li><a href="https://aws.amazon.com/">AWS</a></li><li><a href="https://www.digitalocean.com/">Digital Ocean</a></li><li><a href="https://www.vultr.com/">Vultr</a></li><li><a href="https://us.ovhcloud.com/">OVH</a></li></ul><figure class="post__image post__image--left"><amp-img src="https://patcave.me/media/posts/12/grmuy1fs409mjcg3xrqs-md.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/grmuy1fs409mjcg3xrqs-md-xs.png 300w ,https://patcave.me/media/posts/12/responsive/grmuy1fs409mjcg3xrqs-md-sm.png 480w ,https://patcave.me/media/posts/12/responsive/grmuy1fs409mjcg3xrqs-md-md.png 768w ,https://patcave.me/media/posts/12/responsive/grmuy1fs409mjcg3xrqs-md-lg.png 1024w ,https://patcave.me/media/posts/12/responsive/grmuy1fs409mjcg3xrqs-md-xl.png 1360w ,https://patcave.me/media/posts/12/responsive/grmuy1fs409mjcg3xrqs-md-2xl.png 1600w" alt="" width="237" height="181" layout="responsive"></amp-img></figure><p>AWS was cost prohibitive, though would have been the most feature rich one. OVH would mostly put us in a simliar situation as before.</p><p>So it was between DigitalOcean and Vultr. We ended up choosing Vultr because it had some slightly cheaper VM options and it has <em>way</em> more locations; which will be nice for ad-hoc game servers.</p><h3>Bill reduction strategy</h3><p>We had a lot of inefficiency in our hosting that we could fix. </p><p>First was all the static HTML sites we were serving. Vultr has an S3-type offering, so I assigned my "intern" the task of moving all of those sites into there. This will save us overhead on disk and also on just having less things to manage overall, since its setup and forget.</p><p>This was also a test for me to see how well their S3 setup works. The biggest hurdle was going to be figuring out if we can store our terabyte of attachment data out of S3 as well. A disk of that size for Vultr was going to be very expensive. </p><p>In researching this, I learned I could only do this if we upgraded our Xenforo software to 2+ (we were still running 1.4). However this was possible to do, even though there were no docs specifically for Vultr, I was able to figure out how to do this. Xenforo 2 also allowed us to do a lot of things we had wanted to do for many years but were unable to because of XF 1 limitations.</p><p>Coupled with the cheap VM's that are offered by Vultr, and the use of S3 as a backend, as well as ad-hoc game servers; I believed we could significantly reduce our hosting cost this way.</p><hr><h2>The Prototypes</h2><p> </p><figure class="post__image post__image--left"><amp-img src="https://patcave.me/media/posts/12/prototype-comic-2-en.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-xs.png 300w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-sm.png 480w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-md.png 768w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-lg.png 1024w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-xl.png 1360w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-2xl.png 1600w" alt="" width="299" height="261" layout="responsive"></amp-img></figure>There was a lot of unknowns going into this. This site has existed since 2007, there was literally 13 years of data we <em>absolutely could not lose</em>. If that data was lost it would be gone forever. <p></p><p>So, I created a clean install of Xenforo 2 on a fresh Vultr VM so we could see what we wanted to end state to be.</p><p> </p><p>This prototype had no data in the db or attachments. It was done this way to make it faster to setup and also reduce any conversion issues, and it was way cheaper. I wanted a clean reference setup. We got setup with the plugins we evaluated in the research steps from earlier.</p><p>We spent probably a month or so working on setting this up and getting familiar with Xenforo 2. I also assigned my "intern" the task of setting up a UI theme to be reminiscent of our branding and old website, built off a more modern base. We quickly realized how many hacks the old site had in its CSS and theme so that was a fun adventure in CSS and HTML, something I haven't done much of in a long time.</p><p>The next prototype site I stood up was to clone the existing site sans attachments. It's purpose was to test the migration path from 1 to 2. Basically, what are we going to run into when we do this for real? The process was actually pretty smooth, though there were a bunch of non-critical things that didn't make it over cleanly, and we had to come back later and fix those up. </p><hr><h2>The Great Migration</h2><p> </p><figure class="post__image post__image--right"><amp-img src="https://patcave.me/media/posts/12/download.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/download-xs.png 300w ,https://patcave.me/media/posts/12/responsive/download-sm.png 480w ,https://patcave.me/media/posts/12/responsive/download-md.png 768w ,https://patcave.me/media/posts/12/responsive/download-lg.png 1024w ,https://patcave.me/media/posts/12/responsive/download-xl.png 1360w ,https://patcave.me/media/posts/12/responsive/download-2xl.png 1600w" alt="" width="263" height="167" layout="responsive"></amp-img></figure>For most of January, I was rather busy given that my startup had just been <a href="https://narrativescience.com/resource/blog/narrative-science-signs-agreement-to-be-acquired-by-salesforce">acquired by Salesforce</a>, so my head was not really in a good space to work on this infra for TF2Maps. However the deadline was fast approaching, so we set a time and sent out the announcement.<p></p><p>We had started moving some items in January in preparation of the VM move:</p><ul><li>DNS served out of Vultr</li><li>Email from a free email provider</li><li>Static HTML sites</li><li>Discord Bot</li><li><a href="https://patcave.me/amp/game-server-monitoring/">Grafana</a></li></ul><p>There was absolutely no way to do this without taking the site offline while data moved. Thankfully, nothing bad happens if it goes down for a few days unlike production sites at work. </p><p>The VM move was a tense 3 days. If something in this process failed we may have lost a lot of data, so we needed to be very precise and methodical.</p><ol><li>Create new (final) VM for the Xenforo site</li><li>Put up a maintenance page to totally prevent any DB writes from occuring</li><li>Move the SQL databases onto new VM, save a backup in S3</li><li>Attach a 1TB disk to the VM, and start the static file sync<ul><li>This ended up taking 3 days to complete</li></ul></li><li>Clone the Xenforo 1 site</li><li>Once all data was sync'd, perform the upgrade</li><li>Setup all the new things we needed to do, including the theme</li><li>Create a thread on the forums for end users to report bugs</li><li>Let Staff member inspect the site and knock out some obvious issues first</li><li>Open it up to the public (this was scary)</li></ol><hr><h2>The Post Migration Chaos</h2><p>As usual with projects like this, we got hundreds of bug reports and small issues.</p><p>To add to this, our first salvo was just to get us out of the colo expiration problem. We had not actually moved our attachments into S3, or created ad-hoc servers.</p><p>We would not be able to realize our cost savings until we had finally moved attachment data into S3. Again, this was easy because I already knew what to do because of the prototype phase we did. I had to once again take the site offline for a few days to do this. Once moved, I detached the disk, but kept it around as a hot backup incase something really went wrong with S3. After a week, I shutdown that disk, given it was quite expensive.</p><p>I assigned as many bugs to my intern as I felt he could reasonably handle while I tackled the more difficult ones. Together, we ended up fixing probably 50 issues over the course of a few weeks. </p><hr><h2>A major upgrade to security</h2><p>Now I don't want to knock on the people who set things up before I came along because they did a good job of just keeping the ship floating, but lets just say the state of security was a bit, uhhh, <a href="https://www.merriam-webster.com/dictionary/ramshackle">ramshackle</a>. </p><p>Thankfully, I've done server hardening many many times before. Over the next few weeks I worked on setting up:</p><ul><li>Least privilege database users</li><li>SSH key authentication only</li><li>No root user logins</li><li>SSH whitelisted to only administrators IP's</li><li>Stateful firewall (fail2ban)</li><li>Ulimits</li><li>Apache vhosts run in sandboxes from one another</li><li>Wildcard SSL cert from letsencrypt that automatically renews itself</li><li>Least priviledge firewalls inside of Vultr</li><li>Forced HTTPS redirection</li></ul><hr><h2>Outcomes</h2><ul><li>Data move completed with 3 days to spare!</li><li><em>We did not lose any data whatsoever</em></li><li>The steady state hosting cost was reduced by 65%!</li><li>Security is a lot better now</li><li>Automation now exists for all the mundane things<ul><li>Automatic DB backups to S3 on a weekly cadance</li><li>Automatic SSL renewal</li><li>Xenforo -&gt; Discord rank syncing</li></ul></li><li>Multiple people on Staff can now help me operate the site thanks to Xenforo 2 being a lot easier to administer.</li></ul><figure class="post__image post__image--center"><amp-img src="https://patcave.me/media/posts/12/great-success.jpg" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/great-success-xs.jpg 300w ,https://patcave.me/media/posts/12/responsive/great-success-sm.jpg 480w ,https://patcave.me/media/posts/12/responsive/great-success-md.jpg 768w ,https://patcave.me/media/posts/12/responsive/great-success-lg.jpg 1024w ,https://patcave.me/media/posts/12/responsive/great-success-xl.jpg 1360w ,https://patcave.me/media/posts/12/responsive/great-success-2xl.jpg 1600w" alt="" width="576" height="432" layout="responsive"></amp-img></figure><hr><h2>Learnings</h2><p>To be successful here, I had to wear a lot of different hats. I was basically the lead developer, project manager, ui designer, QA, security, and finance. I had a few people who were technical enough I could slice off some simple tasks and assign them to those people which did help a lot.</p><p>The most difficult thing to do was cut through all the people wanting to just slap something out there, and managing expectations. Most of the people involved have not been a part of a project such as this before so I had to also wear the hat of the mentor. I had to guide everyone through a process which I had developed from doing migration projects like this at work. I have a systematic process to do this, but it was defiantly challenging getting folks onboard and to trust that I knew what I was doing. There was a great deal of skepticism that I would be able to actually pull this off, and to a degree, I was unsure if I would actually be able to deliver on some of the goals, mostly relating to cost optimization. The research step helped ease a lot of peoples concerns because I have proof that we would be able to actually pull this off.</p><p>The other thing to do was managing the expectations of our user base. We probably have about 1000 active users, so we got absolutely slammed with requests for a few weeks. My intern helped triage a lot of this stuff which was a nice burden off my shoulders, since I could focus on much bigger picture things. Of course every person feels the issue they are reporting is the most important one and you have to be patient and communicate that we acknowledge the issue and we are going to get to it when we can given its difficulty to fix and its value to the community as a whole. Some issues however we probably just aren't going to fix because they're so difficult and low value, and you have to accept that in projects like this, those things are going to happen.</p><p>Another thing I did here was to coach the rest of staff to act on my behalf and get in front of issues and snowballing discussions about the new site. I defiantly succeeded here in rallying dozens of people to assist me when I needed it. I think the key to this is being transparent and very clear about what you need from them.</p><hr><h2>The Process in Bullet form</h2><ol><li>Assess the scope of the problem at hand, i.e. what do we need to solve for?</li><li>Research solutions<ul><li>Create prototypes to learn about a solution so you can pivot your research if needed</li><li>Setup cost estimates</li><li>Estimate the scope of work involved, and determine the must-haves<ul><li>Try to organize the work such that you can farm out to multiple people</li></ul></li></ul></li><li>Prioritize work based on the constraints of the problem (such as our colo contract expiration)</li><li>Action the minimum critical scope as your first salvo</li><li>Openly seek feedback</li><li>Iterate on improvements and bug fixes until completion</li></ol><p>Don't forget to openly communicate to stakeholders about where you are in this process and be open about your unknowns. Seek to resolve those unknowns in your research as much as possible.</p><aside><ul class="post-tag"><li><a href="https://patcave.me/amp/tags/gaming/">Gaming</a></li><li><a href="https://patcave.me/amp/tags/computer-science/">Programming Stuff</a></li></ul></aside></div></article><nav class="post-pagination wrap-inner"><div class="post-pagination-prev"><span>Previous</span> <a href="https://patcave.me/amp/my-choice-tools-for-cloud-engineering/">My choice tools for Cloud Engineering</a></div></nav></main><amp-animation id="showAnim" layout="nodisplay"><script type="application/json">{
+                    "duration": "200ms",
+                    "fill": "both",
+                    "iterations": "1",
+                    "direction": "alternate",
+                    "animations": [{
+                        "selector": ".post-scroll",
+                        "keyframes": [{
+                            "opacity": "1",
+                            "visibility": "visible",
+                            "transform": "scale(1)"
+                        }]
+                    }]
+                }</script></amp-animation><amp-animation id="hideAnim" layout="nodisplay"><script type="application/json">{
+                    "duration": "200ms",
+                    "fill": "both",
+                    "iterations": "1",
+                    "direction": "alternate",
+                    "animations": [{
+                        "selector": ".post-scroll",
+                        "keyframes": [{
+                            "opacity": "0",
+                            "visibility": "hidden",
+                            "transform": "scale(0.1)"
+                        }]
+                    }]
+                }</script></amp-animation><div class="post-scroll-marker"><amp-position-observer on="enter:hideAnim.start; exit:showAnim.start" layout="nodisplay"></amp-position-observer></div><button class="post-scroll" on="tap:top.scrollTo(duration=200)">&#8593;</button><footer class="bottom">© PATRICK HENNESSY 2015 - 2022</footer><amp-sidebar id="navbar-sidebar" layout="nodisplay"><ul><li><a href="https://patcave.me/amp/">Home</a></li><li><a href="https://patcave.me/amp/about/">About</a></li><li><span>Contact</span><ul class="navbar__submenu level-2" aria-hidden="true"><li><a href="https://www.linkedin.com/in/pmhennessy/" target="_blank">LinkedIn</a></li><li><a href="https://github.com/ns-phennessy" target="_blank">Github</a></li><li><a href="https://www.youtube.com/channel/UCIw-YA385k1S5IOwYD-iV5Q" target="_blank">YouTube</a></li><li><a href="https://tf2maps.net/members/zeus3005.28272/" target="_blank">TF2Maps.net</a></li><li><a href="mailto:phennessy517@gmail.com" target="_blank">Email</a></li></ul></li></ul></amp-sidebar></body></html>
