@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-04-21T04:05:34-06:00</updated>
+    <updated>2022-04-22T02:52:11-06:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Programming Stuff"/>
             <category term="Gaming"/>
 
-        <updated>2022-04-21T04:05:34-06:00</updated>
+        <updated>2022-04-22T02:52:11-06:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/12/blueprints.png" alt="" />
@@ -167,6 +167,7 @@
 <li>Xenforo -&gt; Discord rank syncing</li>
 </ul>
 </li>
+<li>The site is much better protected from disasters given most of the data is in S3 and the rest is regularly backed up</li>
 <li>Multiple people on Staff can now help me operate the site thanks to Xenforo 2 being a lot easier to administer.</li>
 </ul>
 <figure class="post__image post__image--center"><img loading="lazy"  src="https://patcave.me/media/posts/12/great-success.jpg" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/great-success-xs.jpg 300w ,https://patcave.me/media/posts/12/responsive/great-success-sm.jpg 480w ,https://patcave.me/media/posts/12/responsive/great-success-md.jpg 768w ,https://patcave.me/media/posts/12/responsive/great-success-lg.jpg 1024w ,https://patcave.me/media/posts/12/responsive/great-success-xl.jpg 1360w ,https://patcave.me/media/posts/12/responsive/great-success-2xl.jpg 1600w"  alt="" width="576" height="432"></figure>
