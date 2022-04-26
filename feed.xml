@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-04-26T04:38:21-06:00</updated>
+    <updated>2022-04-26T05:02:16-06:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Programming Stuff"/>
             <category term="Gaming"/>
 
-        <updated>2022-04-26T04:38:21-06:00</updated>
+        <updated>2022-04-26T05:02:16-06:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/12/blueprints.png" alt="" />
@@ -90,21 +90,20 @@
 <p>We had a lot of inefficiency in our hosting that we could fix. </p>
 <p>First was all the static HTML sites we were serving. Vultr has an S3-type offering, so I assigned my "intern" the task of moving all of those sites into there. This will save us overhead on disk and also on just having less things to manage overall, since its setup and forget.</p>
 <p>This was also a test for me to see how well their S3 setup works. The biggest hurdle was going to be figuring out if we can store our terabyte of attachment data out of S3 as well. A disk of that size for Vultr was going to be very expensive. </p>
-<p>In researching this, I learned I could only do this if we upgraded our Xenforo software to 2+ (we were still running 1.4). However this was possible to do, even though there were no docs specifically for Vultr, I was able to figure out how to do this. Xenforo 2 also allowed us to do a lot of things we had wanted to do for many years but were unable to because of XF 1 limitations.</p>
+<p>In researching this, I learned I could only do this if we upgraded our Xenforo software to 2+ (we were still running 1.4). Unfortunately there were no docs specifically for Vultr, but I was able to figure out how to get it to work, mostly by reading the source code of a few plugins. Xenforo 2 also allowed us to do a lot of things we had wanted to do for many years but were unable to because of XF 1 limitations.</p>
 <p>Coupled with the cheap VM's that are offered by Vultr, and the use of S3 as a backend, as well as ad-hoc game servers; I believed we could significantly reduce our hosting cost this way.</p>
 <hr>
 <h2>The Prototypes</h2>
 <p> </p>
-<figure class="post__image post__image--left"><img loading="lazy"  src="https://patcave.me/media/posts/12/prototype-comic-2-en.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-xs.png 300w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-sm.png 480w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-md.png 768w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-lg.png 1024w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-xl.png 1360w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-2xl.png 1600w"  alt="" width="299" height="261"></figure>There was a lot of unknowns going into this. This site has existed since 2007, there was literally 13 years of data we <em>absolutely could not lose</em>. If that data was lost it would be gone forever. </p>
-<p>So, I created a clean install of Xenforo 2 on a fresh Vultr VM so we could see what we wanted to end state to be.</p>
-<p> </p>
-<p>This prototype had no data in the db or attachments. It was done this way to make it faster to setup and also reduce any conversion issues, and it was way cheaper. I wanted a clean reference setup. We got setup with the plugins we evaluated in the research steps from earlier.</p>
-<p>We spent probably a month or so working on setting this up and getting familiar with Xenforo 2. I also assigned my "intern" the task of setting up a UI theme to be reminiscent of our branding and old website, built off a more modern base. We quickly realized how many hacks the old site had in its CSS and theme so that was a fun adventure in CSS and HTML, something I haven't done much of in a long time.</p>
-<p>The next prototype site I stood up was to clone the existing site sans attachments. It's purpose was to test the migration path from 1 to 2. Basically, what are we going to run into when we do this for real? The process was actually pretty smooth, though there were a bunch of non-critical things that didn't make it over cleanly, and we had to come back later and fix those up. </p>
+<figure class="post__image post__image--left"><img loading="lazy"  src="https://patcave.me/media/posts/12/prototype-comic-2-en.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-xs.png 300w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-sm.png 480w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-md.png 768w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-lg.png 1024w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-xl.png 1360w ,https://patcave.me/media/posts/12/responsive/prototype-comic-2-en-2xl.png 1600w"  alt="" width="299" height="261"></figure>There was a lot of unknowns going into this. This site has existed since 2007, there was literally 13 years of data we <em>absolutely could not lose</em>. If that data was lost it would be gone forever. To be confident in what I was going to do; i stood up several prototype instances.</p>
+<p>One was a clean install of Xenforo 2 on a fresh Vultr VM so we could see what we wanted to end state to be.</p>
+<p>This prototype had no data in the database or attachments. It was done this way to make it faster to setup and reduce any conversion issues, and it was way cheaper. I wanted a clean reference setup. Using the research we did before; we installed all the plugins we believed would cover our needs, and then did a lot of testing to be certain.</p>
+<p>We spent probably a month or so working on setting up the clean install and getting familiar with Xenforo 2. I also assigned my "intern" the task of setting up a UI theme to be reminiscent of our branding and old website, built off a more modern base. We quickly realized how many hacks the old site had in its CSS and theme so that was a fun adventure in CSS and HTML, something I haven't done much of in a long time.</p>
+<p>The next prototype site I stood up was a clone of the existing site without attachments. It's purpose was to test the migration path from version 1.x to 2.x. Basically, what are we going to run into when we do this for real? The process was actually pretty smooth, though there were a bunch of non-critical things that didn't make it over cleanly, and we had to come back later and fix those up. </p>
 <hr>
 <h2>The Great Migration</h2>
 <p> </p>
-<figure class="post__image post__image--right"><img loading="lazy"  src="https://patcave.me/media/posts/12/download.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/download-xs.png 300w ,https://patcave.me/media/posts/12/responsive/download-sm.png 480w ,https://patcave.me/media/posts/12/responsive/download-md.png 768w ,https://patcave.me/media/posts/12/responsive/download-lg.png 1024w ,https://patcave.me/media/posts/12/responsive/download-xl.png 1360w ,https://patcave.me/media/posts/12/responsive/download-2xl.png 1600w"  alt="" width="263" height="167"></figure>For most of January, I was rather busy given that my startup had just been <a href="https://narrativescience.com/resource/blog/narrative-science-signs-agreement-to-be-acquired-by-salesforce">acquired by Salesforce</a>, so my head was not really in a good space to work on this infra for TF2Maps. However the deadline was fast approaching, so we set a time and sent out the announcement.</p>
+<figure class="post__image post__image--right"><img loading="lazy"  src="https://patcave.me/media/posts/12/download.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/download-xs.png 300w ,https://patcave.me/media/posts/12/responsive/download-sm.png 480w ,https://patcave.me/media/posts/12/responsive/download-md.png 768w ,https://patcave.me/media/posts/12/responsive/download-lg.png 1024w ,https://patcave.me/media/posts/12/responsive/download-xl.png 1360w ,https://patcave.me/media/posts/12/responsive/download-2xl.png 1600w"  alt="" width="263" height="167"></figure>For most of January, I was rather busy given that my startup had just been <a href="https://narrativescience.com/resource/blog/narrative-science-signs-agreement-to-be-acquired-by-salesforce">acquired by Salesforce</a>, so my head was not really in a good space to work on this for TF2Maps. At this point though; all the research was done to be confident in our move, so we just needed to execute on it.</p>
 <p>We had started moving some items in January in preparation of the VM move:</p>
 <ul>
 <li>DNS served out of Vultr</li>
@@ -113,33 +112,33 @@
 <li>Discord Bot</li>
 <li><a href="https://patcave.me/game-server-monitoring/">Grafana</a></li>
 </ul>
-<p>There was absolutely no way to do this without taking the site offline while data moved. Thankfully, nothing bad happens if it goes down for a few days unlike production sites at work. </p>
-<p>The VM move was a tense 3 days. If something in this process failed we may have lost a lot of data, so we needed to be very precise and methodical.</p>
+<p>There was absolutely no way to do this without taking the site offline while data moved. Thankfully, nothing bad happens if TF2Maps is down for a few days. I wish it worked this way with production systems at work...</p>
+<p>The VM move was a tense 3 days. If something in this process failed we may have lost a lot of data, so we needed to be very precise and methodical. Here was the precise steps, in which I was in constant communication with my intern and other "stakeholders":</p>
 <ol>
-<li>Create new (final) VM for the Xenforo site</li>
-<li>Put up a maintenance page to totally prevent any DB writes from occuring</li>
-<li>Move the SQL databases onto new VM, save a backup in S3</li>
+<li>Create new (final) VM for the Xenforo site inside Vultr</li>
+<li>Put up a maintenance page to categorically prevent any DB writes from occurring</li>
+<li>Move the SQL databases onto the new VM, and save a backup in S3</li>
 <li>Attach a 1TB disk to the VM, and start the static file sync
 <ul>
 <li>This ended up taking 3 days to complete</li>
 </ul>
 </li>
 <li>Clone the Xenforo 1 site</li>
-<li>Once all data was sync'd, perform the upgrade</li>
-<li>Setup all the new things we needed to do, including the theme</li>
+<li>Perform the Xenforo upgrade</li>
+<li>Setup all the new plugins and theme</li>
+<li>Other Staff thoroughly inspect the site to knock out obvious issues first</li>
 <li>Create a thread on the forums for end users to report bugs</li>
-<li>Let Staff member inspect the site and knock out some obvious issues first</li>
-<li>Open it up to the public (this was scary)</li>
+<li>Open it up to the public (Scary!)</li>
 </ol>
 <hr>
 <h2>The Post Migration Chaos</h2>
-<p>As usual with projects like this, we got hundreds of bug reports and small issues.</p>
+<p>As usual with projects like this, we got dozens of bug reports and small issues.</p>
 <p>To add to this, our first salvo was just to get us out of the colo expiration problem. We had not actually moved our attachments into S3, or created ad-hoc servers.</p>
 <p>We would not be able to realize our cost savings until we had finally moved attachment data into S3. Again, this was easy because I already knew what to do because of the prototype phase we did. I had to once again take the site offline for a few days to do this. Once moved, I detached the disk, but kept it around as a hot backup incase something really went wrong with S3. After a week, I shutdown that disk, given it was quite expensive.</p>
-<p>I assigned as many bugs to my intern as I felt he could reasonably handle while I tackled the more difficult ones. Together, we ended up fixing probably 50 issues over the course of a few weeks. </p>
+<p>I assigned as many bugs to my intern as I felt he could reasonably handle while I tackled the more difficult ones. Together, we ended up fixing probably 50 issues over the course of a few weeks. These bugs were all over the place, and a lot of it was things we didn't purposely set or create. Needing to troubleshoot systems you're unfamiliar is uhhh, fun. </p>
 <hr>
 <h2>A major upgrade to security</h2>
-<p>Now I don't want to knock on the people who set things up before I came along because they did a good job of just keeping the ship floating, but lets just say the state of security was a bit, uhhh, <a href="https://www.merriam-webster.com/dictionary/ramshackle">ramshackle</a>. </p>
+<p>Now I don't want to knock on the people who set things up before I came along because they did a good job of just keeping the ship floating, but lets just say the state of security was a bit, uhhh, <em>nuanced</em>. </p>
 <p>Thankfully, I've done server hardening many many times before. Over the next few weeks I worked on setting up:</p>
 <ul>
 <li>Least privilege database users</li>
@@ -148,9 +147,10 @@
 <li>SSH whitelisted to only administrators IP's</li>
 <li>Stateful firewall (fail2ban)</li>
 <li>Ulimits</li>
-<li>Apache vhosts run in sandboxes from one another</li>
-<li>Wildcard SSL cert from letsencrypt that automatically renews itself</li>
-<li>Least priviledge firewalls inside of Vultr</li>
+<li>Apache virtual hosts run in discrete sandboxes</li>
+<li>Log rotate configs</li>
+<li>Auto-renewing wildcard SSL cert from LetsEncrypt</li>
+<li>Least privilege firewalls inside of Vultr</li>
 <li>Forced HTTPS redirection</li>
 </ul>
 <hr>
@@ -158,7 +158,7 @@
 <ul>
 <li>Data move completed with 3 days to spare!</li>
 <li><em>We did not lose any data whatsoever</em></li>
-<li>The steady state hosting cost was reduced by 65%!</li>
+<li>The steady state hosting cost was reduced by over 65%!</li>
 <li>Security is a lot better now</li>
 <li>Automation now exists for all the mundane things
 <ul>
@@ -173,10 +173,10 @@
 <figure class="post__image post__image--center"><img loading="lazy"  src="https://patcave.me/media/posts/12/great-success.jpg" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/12/responsive/great-success-xs.jpg 300w ,https://patcave.me/media/posts/12/responsive/great-success-sm.jpg 480w ,https://patcave.me/media/posts/12/responsive/great-success-md.jpg 768w ,https://patcave.me/media/posts/12/responsive/great-success-lg.jpg 1024w ,https://patcave.me/media/posts/12/responsive/great-success-xl.jpg 1360w ,https://patcave.me/media/posts/12/responsive/great-success-2xl.jpg 1600w"  alt="" width="576" height="432"></figure>
 <hr>
 <h2>Learnings</h2>
-<p>To be successful here, I had to wear a lot of different hats. I was basically the lead developer, project manager, ui designer, QA, security, and finance. I had a few people who were technical enough I could slice off some simple tasks and assign them to those people which did help a lot.</p>
-<p>The most difficult thing to do was cut through all the people wanting to just slap something out there, and managing expectations. Most of the people involved have not been a part of a project such as this before so I had to also wear the hat of the mentor. I had to guide everyone through a process which I had developed from doing migration projects like this at work. I have a systematic process to do this, but it was defiantly challenging getting folks onboard and to trust that I knew what I was doing. There was a great deal of skepticism that I would be able to actually pull this off, and to a degree, I was unsure if I would actually be able to deliver on some of the goals, mostly relating to cost optimization. The research step helped ease a lot of peoples concerns because I have proof that we would be able to actually pull this off.</p>
-<p>The other thing to do was managing the expectations of our user base. We probably have about 1000 active users, so we got absolutely slammed with requests for a few weeks. My intern helped triage a lot of this stuff which was a nice burden off my shoulders, since I could focus on much bigger picture things. Of course every person feels the issue they are reporting is the most important one and you have to be patient and communicate that we acknowledge the issue and we are going to get to it when we can given its difficulty to fix and its value to the community as a whole. Some issues however we probably just aren't going to fix because they're so difficult and low value, and you have to accept that in projects like this, those things are going to happen.</p>
-<p>Another thing I did here was to coach the rest of staff to act on my behalf and get in front of issues and snowballing discussions about the new site. I defiantly succeeded here in rallying dozens of people to assist me when I needed it. I think the key to this is being transparent and very clear about what you need from them.</p>
+<p>To be successful here, I had to wear a lot of different hats. I was basically the lead developer, project manager, ui designer, QA, security, and finance. I had a few people who were technical enough I could slice off some simple tasks and assign them to those people which did help a lot. Shout out to my intern!</p>
+<p>The most difficult thing to do was cut through all the people wanting to shoot from the hip and get something out quick and also managing peoples expectations. Most of the people involved have not been a part of a project such as this before so I had to also wear the hat of the mentor. I had to guide everyone through a process which I had developed from doing migration projects like this at work. I have a systematic process to do this, but it was defiantly challenging getting folks onboard and to trust that I knew what I was doing. There was a great deal of skepticism that I would be able to actually pull this off, and to a degree, I myself was unsure if I would actually be able to deliver on some of the goals, mostly relating to cost optimization. The research step helped ease a lot of peoples concerns because I had proof that we would be able to actually pull this off.</p>
+<p>The other thing to do was managing the expectations of our user base. We probably have about 1000 active users, so we got absolutely slammed with requests for a few weeks. My intern helped triage a lot of this stuff which was a nice burden off my shoulders, since I could focus on much bigger picture things. Of course every person feels the issue they are reporting is the most important one and you have to be patient and communicate that we acknowledge the issue and we are going to get to it when we can given its difficulty to fix and its value to the community as a whole while also reminding them that I am doing this without being paid at all. Some issues however, we probably just aren't going to fix because they're so difficult and low value. You have to accept that in projects like this, those things are going to happen.</p>
+<p>Another thing I did here was to coach the rest of staff to act on my behalf and get in front of issues and snowballing discussions about the new site. I defiantly succeeded here in rallying dozens of people to assist me when I needed it. I think the key to this is being transparent and very clear about what you need from them and also modeling the behavior you want.</p>
 <hr>
 <h2>The Process in Bullet form</h2>
 <ol>
