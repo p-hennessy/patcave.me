@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-04-22T04:22:09-06:00</updated>
+    <updated>2022-04-26T04:38:21-06:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -19,7 +19,7 @@
             <category term="Programming Stuff"/>
             <category term="Gaming"/>
 
-        <updated>2022-04-22T04:22:09-06:00</updated>
+        <updated>2022-04-26T04:38:21-06:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/12/blueprints.png" alt="" />
@@ -60,7 +60,7 @@
 </ul>
 <h4>Bills Bills Bills</h4>
 <p>I also spoke with the incumbent system administrator about hosting cost; which I had found we were consistently spending more on hosting than we received in donations, and the difference came out of his pocket. Not great, and he defiantly was not happy with it.</p>
-<p>After some research, I determined that we would likely need to upgrade our version of the <a href="https://xenforo.com/">Xenforo </a>fo<span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);">rum software. So I tasked one of my "interns" with going into Xenforo and evaluate every existing plugin we ran on the old site, and asses it's criticality (must have, nice to have, dont need), as </span><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);">well as if we have a migration path for that plugin to Xenforo 2. </span></p>
+<p>After some research, I determined that we would likely need to upgrade our version of the <a href="https://xenforo.com/">Xenforo </a>fo<span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);">rum software in order to manifest significant cost savings. So I tasked one of my "interns" with going into Xenforo and evaluate every existing plugin we ran on the old site, and asses it's criticality (must have, nice to have, dont need), as </span><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);">well as if we have a migration path for that plugin to Xenforo 2. </span></p>
 <p><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);">This research was critical to learning if this was even possible, or if we would need to look into other solutions.</span></p>
 <p><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);">Side note: Google</span><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);"> Sprea</span><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);">dsheets are</span><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);"> great for this kind of ongoing collaboration:</span></p>
 <div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="1">
