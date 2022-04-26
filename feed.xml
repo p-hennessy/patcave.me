@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-04-26T05:11:18-06:00</updated>
+    <updated>2022-04-26T05:16:01-06:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -14,12 +14,12 @@
         <author>
             <name>Patrick Hennessy</name>
         </author>
-        <link href="https://patcave.me/tf2maps-infrastructure-overhaul-project/"/>
-        <id>https://patcave.me/tf2maps-infrastructure-overhaul-project/</id>
+        <link href="https://patcave.me/disaster-averted/"/>
+        <id>https://patcave.me/disaster-averted/</id>
             <category term="Programming Stuff"/>
             <category term="Gaming"/>
 
-        <updated>2022-04-26T05:02:16-06:00</updated>
+        <updated>2022-04-26T05:16:01-06:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/12/blueprints.png" alt="" />
