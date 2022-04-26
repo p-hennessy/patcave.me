@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-04-26T05:16:01-06:00</updated>
+    <updated>2022-04-26T05:17:14-06:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -1286,11 +1286,11 @@
         <author>
             <name>Patrick Hennessy</name>
         </author>
-        <link href="https://patcave.me/what-i-learned-from-making-a-discord-bot-from-scratch/"/>
-        <id>https://patcave.me/what-i-learned-from-making-a-discord-bot-from-scratch/</id>
+        <link href="https://patcave.me/what-i-learned-from-making-a-discord-bot-framework/"/>
+        <id>https://patcave.me/what-i-learned-from-making-a-discord-bot-framework/</id>
             <category term="Programming Stuff"/>
 
-        <updated>2022-01-28T13:11:51-07:00</updated>
+        <updated>2022-04-26T05:17:14-06:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/2/cover-1.png" alt="" />
