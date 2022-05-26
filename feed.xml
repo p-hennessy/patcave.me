@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-05-26T15:18:46-06:00</updated>
+    <updated>2022-05-26T15:21:09-06:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -1795,7 +1795,7 @@ class User(UserIn):
         <id>https://patcave.me/what-i-learned-from-making-a-discord-bot-framework/</id>
             <category term="Programming Stuff"/>
 
-        <updated>2022-04-26T05:17:14-06:00</updated>
+        <updated>2022-05-26T15:21:09-06:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/2/cover-1.png" alt="" />
@@ -1834,12 +1834,14 @@ class User(UserIn):
 <p dir="auto">This class was a good opportunity to use an <strong><a href="https://en.wikipedia.org/wiki/Protocol_(object-oriented_programming)" rel="nofollow">interface</a></strong>. So then we ask; what does the bot need to be able to do with the chat service? What things are common operations among all modern chat services?</p>
 <p dir="auto">I created a number of methods to abstract this:</p>
 <div class="highlight highlight-source-python position-relative overflow-auto">
-<pre><span class="pl-s1">connector</span>.<span class="pl-en">say</span>()                 <span class="pl-c"># Says something in a chat channel</span>
-<span class="pl-s1">connector</span>.<span class="pl-en">reply</span>()               <span class="pl-c"># Replies to a user who invoked a command</span>
-<span class="pl-s1">connector</span>.<span class="pl-en">whisper</span>()             <span class="pl-c"># Uses private messaging with the user</span>
-<span class="pl-s1">connector</span>.<span class="pl-en">getUser</span>()             <span class="pl-c"># Get data about a specific user</span>
-<span class="pl-s1">connector</span>.<span class="pl-en">getChannel</span>()          <span class="pl-c"># Get data about a particular channel</span>
-<span class="pl-s1">connector</span>.<span class="pl-en">upload</span>()              <span class="pl-c"># Upload a file to the server</span></pre>
+<pre><code class="language-python">
+connector.say()                 # Says something in a chat channel
+connector.reply()               # Replies to a user who invoked a command
+connector.whisper()             # Uses private messaging with the user
+connector.getUser()             # Get data about a specific user
+connector.getChannel()          # Get data about a particular channel
+connector.upload()              # Upload a file to the server        
+</code></pre>
 </div>
 <p dir="auto">The tricky part was going to be how I could make the bot <em>recieve</em> messages as well. This ended up being a <a href="https://docs.python.org/3.5/library/threading.html" rel="nofollow">thread</a> that just listens on a <a href="https://docs.python.org/3.5/library/socket.html" rel="nofollow">socket</a> for new messages.</p>
 <p dir="auto">It was at this point I started hitting a lot of problems with the socket; websocket; and requests libraries. It got really wonky trying to use <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" rel="nofollow">SSL</a> in Python 2.7, so I was forced to upgrade to Python 3.</p>
