@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="en-us"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Serverless SFTP in AWS - The Patcave</title><meta name="description" content="At Narrative Science we believe in giving our engineers the freedom to innovate. We do this through an annual 3-day hackathon and quarterly hack days. In addition, we have an Incubation Team that works on prototyping ideas not otherwise found on our roadmap. In this post, I would like&hellip;"><meta name="generator" content="Publii Open-Source CMS for Static Site"><link rel="canonical" href="https://patcave.me/serverless-sftp-in-aws/"><link rel="amphtml" href="https://patcave.me/amp/serverless-sftp-in-aws/"><link rel="alternate" type="application/atom+xml" href="https://patcave.me/feed.xml"><link rel="alternate" type="application/json" href="https://patcave.me/feed.json"><link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&amp;subset=latin-ext&amp;display=swap" rel="stylesheet"><style>:root{--body-font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";--heading-font:'Roboto Condensed',sans-serif;--logo-font:'Roboto Condensed',sans-serif;--menu-font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"}</style><link rel="stylesheet" href="https://patcave.me/assets/css/style.css?v=4945aedf837c971c57d7192803b442c1"><link rel="stylesheet" href="https://patcave.me/assets/css/photoswipe.css?v=7331f6eb15671b2fc8e3ffd46e849f7b"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://patcave.me/serverless-sftp-in-aws/"},"headline":"Serverless SFTP in AWS","datePublished":"2019-11-18T13:19","dateModified":"2022-05-26T14:59","image":{"@type":"ImageObject","url":"https://patcave.me/media/posts/13/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574.png","height":574,"width":1024},"description":"At Narrative Science we believe in giving our engineers the freedom to innovate. We do this through an annual 3-day hackathon and quarterly hack days. In addition, we have an Incubation Team that works on prototyping ideas not otherwise found on our roadmap. In this post, I would like&hellip;","author":{"@type":"Person","name":"Patrick Hennessy"},"publisher":{"@type":"Organization","name":"Patrick Hennessy"}}</script><style>.pswp--svg .pswp__button,
+				          .pswp--svg .pswp__button--arrow--left:before,
+				          .pswp--svg .pswp__button--arrow--right:before {
+					          background-image: url(https://patcave.me/assets/svg/gallery-icons-light.svg);
+			              }</style><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Maven+Pro&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://patcave.me/assets/css/prism.css?v=3b135d1db236b56f00e6b8e7a4af7a98"></head><body><div class="site-container"><header class="top" id="js-header"><a class="logo" href="https://patcave.me/">The Patcave</a><nav class="navbar js-navbar"><button class="navbar__toggle js-toggle" aria-label="Menu" aria-haspopup="true" aria-expanded="false"><span class="navbar__toggle-box"><span class="navbar__toggle-inner">Menu</span></span></button><ul class="navbar__menu"><li><a href="https://patcave.me/" target="_self">Home</a></li><li><a href="https://patcave.me/about/" target="_self">About</a></li><li class="has-submenu"><span class="is-separator" aria-haspopup="true">Contact</span><ul class="navbar__submenu level-2" aria-hidden="true"><li><a href="https://www.linkedin.com/in/pmhennessy/" target="_blank">LinkedIn</a></li><li><a href="https://github.com/ns-phennessy" target="_blank">Github</a></li><li><a href="https://www.youtube.com/channel/UCIw-YA385k1S5IOwYD-iV5Q" target="_blank">YouTube</a></li><li><a href="https://tf2maps.net/members/zeus.28272/" target="_blank">TF2Maps.net</a></li><li><a href="mailto:phennessy517@gmail.com" target="_blank">Email</a></li></ul></li></ul></nav></header><main><article class="post"><div class="hero"><figure class="hero__image hero__image--overlay"><img src="https://patcave.me/media/posts/13/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574.png" srcset="https://patcave.me/media/posts/13/responsive/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574-xs.png 300w, https://patcave.me/media/posts/13/responsive/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574-sm.png 480w, https://patcave.me/media/posts/13/responsive/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574-md.png 768w, https://patcave.me/media/posts/13/responsive/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574-lg.png 1024w, https://patcave.me/media/posts/13/responsive/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574-xl.png 1360w, https://patcave.me/media/posts/13/responsive/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574-2xl.png 1600w" sizes="(max-width: 1600px) 100vw, 1600px" loading="eager" height="574" width="1024" alt=""></figure><header class="hero__content"><div class="wrapper"><div class="post__meta"><time datetime="2019-11-18T13:19">November 18, 2019</time></div><h1>Serverless SFTP in AWS</h1></div></header></div><div class="wrapper post__entry"><p>At Narrative Science we believe in giving our engineers the freedom to innovate. We do this through an annual 3-day hackathon <i>and</i> quarterly hack days. In addition, we have an Incubation Team that works on prototyping ideas not otherwise found on our roadmap. </p><p>In this post, I would like to showcase one of the projects that another engineer and myself were able to complete during our most recent annual hackathon. Specifically, we were able to take one of our most critical servers and turn it into a serverless system using Amazon Transfer, Lambda, and S3.</p><hr><h2>What were we replacing?</h2><p>Some of our clients prefer to send and receive large amounts of data at one time. We facilitate this through the use of an SFTP server. </p><p>Below is a simple architecture overview:</p><div class="gallery-wrapper"><div class="gallery" data-is-empty="false" data-columns="1"><figure class="gallery__item"><a href="https://patcave.me/media/posts/13/gallery/SFTP-Hack-2-3.png" data-size="799x465"><img loading="lazy" src="https://patcave.me/media/posts/13/gallery/SFTP-Hack-2-3-thumbnail.png" alt="" width="720" height="419"></a></figure></div></div><p>The SFTP server needs to meet a handful of high-level requirements:</p><ul><li>Strict user isolation</li><li>High availability</li><li>Encryption of data in-flight and at rest</li><li><a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/DataDurability.html">Durability</a> of a client’s data</li><li>Ability to run incoming files through our <a href="https://narrativescience.com/products/quill/">Quill</a> pipeline</li></ul><h3>Shortcomings</h3><p>Being a <a href="https://www.aicpa.org/interestareas/frc/assuranceadvisoryservices/aicpasoc2report.html">SOC II (type 2)</a> compliant business, we need to apply regular security updates to our infrastructure. This can be challenging with something that needs to be highly available and has persistent state. Our existing solution used VM’s (virtual machines) and moved around large EBS (elastic block store) volumes. Each time we needed to apply updates, we would need to orchestrate the transfer of that data to ensure none was lost. This costs us a fair amount of engineering time to maintain. On a monthly basis, we would need to spend roughly 6 hours doing these updates.</p><p>The SFTP server features a service (codename <i>Watchdog</i>) that runs incoming files through our Quill pipeline. It watches the file system and when files were dropped into specific directories, it tells Quill to what files to pickup for which project. Typically Quill will then place these stories back on the SFTP for delivery to the customer. Watchdog is one of the oldest pieces of software still running in production, it is not well understood by our engineers, <i>and </i>is still using Python 2.7, which will be end of life in early 2020. So at the very least, it would need to be upgraded to Python 3.x.</p><p>User management was always manual. There was no way to have client support teams administer the users of the system, costing us more engineering time. Non-technical employees were required to login to the SFTP machines using SSH and manage users on a Linux VM, which is error-prone.</p><hr><h2>Moving to serverless</h2><p>Amazon recently released their <a href="https://aws.amazon.com/sftp/">Transfer service</a>; which is a 100 percent serverless SFTP solution backed by S3 and IAM. The only thing we would really need to customize is replicating the Watchdog service with Lambda.</p><p>Moving to a serverless model would mean we don’t have to spend engineering time doing security maintenance since Amazon would handle all of it.</p><div class="gallery-wrapper"><div class="gallery" data-is-empty="false" data-columns="1"><figure class="gallery__item"><a href="https://patcave.me/media/posts/13/gallery/SFTP-hack-1-6.png" data-size="732x466"><img loading="lazy" src="https://patcave.me/media/posts/13/gallery/SFTP-hack-1-6-thumbnail.png" alt="" width="720" height="458"></a></figure></div></div><h3>How this meets our requirements</h3><ol><li><strong>Strict user isolation</strong>. This means that each user who logs in can <i>exclusively</i> see their own files. This can be handled by IAM policies. As part of their Transfer service, AWS added a few variables to IAM that allow us to do this.</li><li><strong>High availability</strong> is <a href="https://aws.amazon.com/sftp/faqs/">guaranteed by Amazon</a>. We want to provide service to our customers at all times since we never know when they will want to hit us. This comes for free as part of moving to serverless.</li><li><strong>Data durability</strong>. It is critical to us that we never ever lose a client’s data, or have it become corrupted. This is also <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/DataDurability.html">guaranteed by Amazon</a>, as it is in S3.</li><li><strong>Encryption of client data at rest</strong>. This is also turn-key with S3 and we have used <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html">bucket encryption</a> many times so this was super simple for us to just use.</li><li><strong>Watchdog</strong>: A service that watches for file uploads and runs those files through our Quill platform asynchronously. This can be replicated by triggering a Lambda function <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html">when objects are uploaded to S3</a> in a specific place. </li></ol><p>A serverless Watchdog is great because it doesn’t “crash” ever. S3 Events can be fired ad nauseam at this Lambda and it will scale massively, <a href="https://aws.amazon.com/lambda/pricing/">while not costing us very much</a>. It also logs directly to a Cloudwatch Log stream, meaning we can grant engineers access to see these logs, or even set up alerts when Watchdog fails.</p><p>As a bonus we are now able to completely reproduce this using Cloudformation. We could spin up as many of these servers as we need to. All we would need to do is bootstrap the users and their keys. If other products required using an SFTP server, we can easily create one in seconds.</p><hr><h2>Building in CloudFormation</h2><p>We leveraged <a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html">AWS SAM</a> to build, package and deploy our SFTP template to CloudFormation. Below are the key resources and highlights from our template.</p><p>Creating the SFTP resource is very straight forward:</p><div><pre><code class="language-yaml">ServerlessSFTP:
+  Type: AWS::Transfer::Server
+  Properties:
+    EndpointType: VPC_ENDPOINT
+    EndpointDetails:
+      VpcEndpointId: !Ref ServerlessSFTPVPCEndpoint
+    LoggingRole: !GetAtt SFTPLoggingRole.Arn
+    Tags:
+      - Key: Environment
+        Value: !Ref Environment
+      - Key: Platform
+        Value: !Ref Platform
+      - Key: Function
+        Value: !Ref Function       </code></pre></div><p>Creating a bucket is necessary if you plan to automate event triggers based on S3 actions:</p><pre><code class="language-yaml">SFTPS3Bucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: !Sub ${Environment}-${Platform}-${Function}
+    AccessControl: Private
+    PublicAccessBlockConfiguration:
+      RestrictPublicBuckets: true
+      IgnorePublicAcls: true
+    BucketEncryption:
+      ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+    Tags:
+      - Key: Environment
+        Value: !Ref Environment
+      - Key: Platform
+        Value: !Ref Platform
+      - Key: Function
+        Value: !Ref Function
+      - Key: DataClassification
+        Value: Secure
+</code></pre><p>It’s important to configure at least one test user to stand up alongside the server. This allows for fast and simple testing of your deployment. User setup can be a little tricky however, there are a number of different resources you’ll need to create and link together:</p><ol><li>An IAM Role</li><li>A Managed Policy</li><li>An SFTP User</li></ol><p>The best practice is to create a fairly open and accessible Managed Policy then utilize the SFTP User’s (scopedown) Policy property to restrict access to only a user’s home directory:</p><pre><code class="language-yaml">TestUserRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: !Sub ${Environment}-${Platform}-${Function}-user
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: "Allow"
+          Principal:
+            Service:
+              - "transfer.amazonaws.com"
+          Action:
+            - "sts:AssumeRole"
+</code></pre><pre><code class="language-yaml">SFTPBucketPolicy:
+  Type: AWS::IAM::ManagedPolicy
+  Properties:
+    ManagedPolicyName: !Sub ${Environment}-${Platform}-${Function}-s3
+    Roles: [!Ref TestUserRole]
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Sid: AllowListingOfUserFolder
+          Action:
+            - s3:ListBucket
+            - s3:GetBucketLocation
+          Effect: Allow
+          # Soft Reference to the Bucket to get around circular dependency
+          Resource: !Sub arn:aws:s3:::${Environment}-${Platform}-${Function}*
+        - Sid: HomeDirObjectAccess
+          Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObjectVersion
+            - s3:DeleteObject
+            - s3:GetObjectVersion
+          # Soft Reference to the Bucket to get around circular dependency
+          Resource: !Sub arn:aws:s3:::${Environment}-${Platform}-${Function}*
+</code></pre><pre><code class="language-yaml">TestUser:
+  Type: AWS::Transfer::User
+  Properties:
+    UserName: !Sub ${Environment}-${Platform}-${Function}-testuser
+    HomeDirectory: !Sub /${SFTPS3Bucket}/testuser
+    # This needs to be a json string
+    Policy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "AllowListingOfUserFolder",
+                "Action": [
+                    "s3:ListBucket"
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                    "arn:aws:s3:::${transfer:HomeBucket}"
+                ],
+                "Condition": {
+                    "StringLike": {
+                        "s3:prefix": [
+                            "${transfer:HomeFolder}/*",
+                            "${transfer:HomeFolder}"
+                        ]
+                    }
+                }
+            },
+            {
+                "Sid": "HomeDirObjectAccess",
+                "Effect": "Allow",
+                "Action": [
+                    "s3:PutObject",
+                    "s3:GetObject",
+                    "s3:DeleteObjectVersion",
+                    "s3:DeleteObject",
+                    "s3:GetObjectVersion",
+                    "s3:GetObjectACL",
+                    "s3:PutObjectACL"
+                ],
+                "Resource": "arn:aws:s3:::${transfer:HomeDirectory}*"
+              }
+        ]
+      }
+    Role: !GetAtt TestUserRole.Arn
+    ServerId: !GetAtt ServerlessSFTP.ServerId
+    # SshPublicKeys: REDACTED
+    Tags:
+      - Key: Environment
+        Value: !Ref Environment
+      - Key: Platform
+        Value: !Ref Platform
+      - Key: Function
+        Value: !Ref Function
+</code></pre><p>Wiring up a Lambda function to trigger on S3 events is a standard use-case, however our first attempts created a few circular dependencies in the configuration in Cloudformation. The quickest solution was to use !Sub calls to build soft links between resources in the template (instead of !Ref).</p><pre><code class="language-yaml">WatchdogFunction:
+  # S3 Event Driven Lambda Function
+  # Notifies Quill when Customers Upload data to the SFTP
+  Type: AWS::Serverless::Function
+  Properties:
+    FunctionName: !Sub ${Environment}-${Platform}-${Function}-watchdog
+    Handler: lambda_handler.handler
+    Runtime: python3.6
+    CodeUri: ./src/
+    Description: &gt;
+      Notifies Quill when customers upload new data to the SFTP
+    MemorySize: 1024
+    Timeout: 180
+    Environment:
+      Variables:
+        # Softlink to the Secret Name
+        SECRET_NAME: !Sub ${Environment}/${Platform}/${Function}/watchdog
+        # Softlinkk to the SFTPS3Bucket
+        CONFIG_BUCKET: !Sub ${Environment}-${Platform}-${Function}
+        CONFIG_KEY: watchdog.config
+    VpcConfig:
+      SecurityGroupIds: [!Ref WatchdogSecurityGroup]
+      SubnetIds:
+        - !If
+          - Production
+          - !FindInMap [ EnvironmentMap, "prod-quill", PrivateSubnet]
+          - !FindInMap [ EnvironmentMap, "nonprod-quill", PrivateSubnet]
+    Policies:
+      - AWSLambdaExecute # AWS Managed Policy
+      - !Ref WatchdogManagePolicy # Stack Managed Policy
+      - !Ref SFTPBucketPolicy # Stack Managed Policy
+    Events:
+      WatchdogS3Event:
+        Type: S3
+        Properties:
+          Bucket: !Ref SFTPS3Bucket
+          Events: s3:ObjectCreated:*
+    Tags:
+      Environment: !Ref Environment
+      Platform: !Ref Platform
+      Function: !Ref Function
+      Component: watchdog
+</code></pre><hr><h2>Challenges</h2><p><strong>Price</strong>. Unfortunately, we discovered that this setup costs us slightly more to host than our previous solution, mostly because Amazon Transfer is a new service and Amazon typically charges more for new shiny things. However, S3, IAM, and Lambda combined cost almost nothing. We still believe that this project was worthwhile given that for a little more hosting cost, we have effectively zero engineering time required to maintain it. </p><p><strong>Static IP Address</strong>. Many clients need to whitelist IP addresses egressing from their network. With Amazon Transfer, it does not use a static IP, nor has the ability to receive one. We would need to add some kind of proxy host like a Network Load Balancer. This would slightly bump up the price and increase the complexity a bit, but still ultimately be 100 percent serverless and low maintenance.</p><hr><h2>Conclusion</h2><p>Thanks to the assistance of a few other intrepid engineers, we were able to complete this project in less than <i>2 working days</i>. Given how critical this system is, it is remarkable how quickly we were able to do this. Amazon has made this extremely easy to set up.</p><p>We now have an easily reproducible, highly available, durable and secure SFTP server that requires zero time from engineering to maintain. The time saved in maintenance alone has made this worth it. In fact, the time it took us to complete this project was roughly the same amount of time we would spend per month just maintaining it.</p><p>One big thing that was pointed out to me after we did this was about the morale surrounding our infrastructure. The SFTP server does not drive new revenue and requires engineers to do regular maintenance. Given that it would crash unexpectedly for a variety of unrelated reasons, many engineers grew to dread dealing with this server. </p><p>Hackathons at Narrative Science are not always about prototyping new features or driving revenue. Sometimes we work on projects that eliminate that dread and reduce the maintenance overhead of our engineers. This ultimately frees us to focus less on maintenance and more on creating quality products for our customers.</p></div><footer class="wrapper post__footer"><ul class="post__tag"><li><a href="https://patcave.me/tags/computer-science/">Programming Stuff</a></li></ul></footer></article><nav class="post__nav"><div class="post__nav-inner"><div class="post__nav-prev"><svg width="1.041em" height="0.416em" aria-hidden="true"><use xlink:href="https://patcave.me/assets/svg/svg-map.svg#arrow-prev"/></svg> <a href="https://patcave.me/automate-all-the-things/" class="invert post__nav-link" rel="prev"><span>Previous</span> Automate All The Things!</a></div><div class="post__nav-next"><a href="https://patcave.me/learning-3d-modeling-for-video-games/" class="invert post__nav-link" rel="next"><span>Next</span> Learning 3D Modeling for TF2 </a><svg width="1.041em" height="0.416em" aria-hidden="true"><use xlink:href="https://patcave.me/assets/svg/svg-map.svg#arrow-next"/></svg></div></div></nav></main><footer class="footer"><div class="footer__copyright"><p>© Patrick Hennessy 2014 - 2022</p></div></footer></div><script>window.publiiThemeMenuConfig = {    
+        mobileMenuMode: 'sidebar',
+        animationSpeed: 300,
+        submenuWidth: 'auto',
+        doubleClickTime: 500,
+        mobileMenuExpandableSubmenus: true, 
+        relatedContainerForOverlayMenuSelector: '.top',
+   };</script><script defer="defer" src="https://patcave.me/assets/js/scripts.min.js?v=48e9576b9741cf2a93ab25c5689c9f5d"></script><script>var images = document.querySelectorAll('img[loading]');
+
+        for (var i = 0; i < images.length; i++) {
+            if (images[i].complete) {
+                images[i].classList.add('is-loaded');
+            } else {
+                images[i].addEventListener('load', function () {
+                    this.classList.add('is-loaded');
+                }, false);
+            }
+        }</script><script defer="defer" src="https://patcave.me/assets/js/photoswipe.min.js?v=b586a3bc288c989ecce7b81b48e35855"></script><script defer="defer" src="https://patcave.me/assets/js/photoswipe-ui-default.min.js?v=9952f77ca2b8fbc9449a268008ea8dee"></script><script>var initPhotoSwipeFromDOM=function(gallerySelector){var parseThumbnailElements=function(el){var thumbElements=el.childNodes,numNodes=thumbElements.length,items=[],figureEl,linkEl,size,item;for(var i=0;i<numNodes;i++){figureEl=thumbElements[i];if(figureEl.nodeType!==1){continue;}
+          linkEl=figureEl.children[0];size=linkEl.getAttribute('data-size').split('x');item={src:linkEl.getAttribute('href'),w:parseInt(size[0],10),h:parseInt(size[1],10)};if(figureEl.children.length>1){item.title=figureEl.children[1].innerHTML;}
+          if(linkEl.children.length>0){item.msrc=linkEl.children[0].getAttribute('src');}
+          item.el=figureEl;items.push(item);}
+          return items;};var closest=function closest(el,fn){return el&&(fn(el)?el:closest(el.parentNode,fn));};var onThumbnailsClick=function(e){e=e||window.event;e.preventDefault?e.preventDefault():e.returnValue=false;var eTarget=e.target||e.srcElement;var clickedListItem=closest(eTarget,function(el){return(el.tagName&&el.tagName.toUpperCase()==='FIGURE');});if(!clickedListItem){return;}
+          var clickedGallery=clickedListItem.parentNode,childNodes=clickedListItem.parentNode.childNodes,numChildNodes=childNodes.length,nodeIndex=0,index;for(var i=0;i<numChildNodes;i++){if(childNodes[i].nodeType!==1){continue;}
+          if(childNodes[i]===clickedListItem){index=nodeIndex;break;}
+          nodeIndex++;}
+          if(index>=0){openPhotoSwipe(index,clickedGallery);}
+          return false;};var photoswipeParseHash=function(){var hash=window.location.hash.substring(1),params={};if(hash.length<5){return params;}
+          var vars=hash.split('&');for(var i=0;i<vars.length;i++){if(!vars[i]){continue;}
+          var pair=vars[i].split('=');if(pair.length<2){continue;}
+          params[pair[0]]=pair[1];}
+          if(params.gid){params.gid=parseInt(params.gid,10);}
+          return params;};var openPhotoSwipe=function(index,galleryElement,disableAnimation,fromURL){var pswpElement=document.querySelectorAll('.pswp')[0],gallery,options,items;items=parseThumbnailElements(galleryElement);options={galleryUID:galleryElement.getAttribute('data-pswp-uid'),getThumbBoundsFn:function(index){var thumbnail=items[index].el.getElementsByTagName('img')[0],pageYScroll=window.pageYOffset||document.documentElement.scrollTop,rect=thumbnail.getBoundingClientRect();return{x:rect.left,y:rect.top+pageYScroll,w:rect.width};},
+          mainClass:'pswp--dark',
+          preload: [1,2],
+          hideAnimationDuration:200,
+          showAnimationDuration:0,
+          bgOpacity: 0.7,
+          showHideOpacity:true,
+          closeOnScroll: true,
+          arrowKeys: true,
+          closeEl: true,
+          captionEl: true,
+          fullscreenEl: false,
+          zoomEl: false,
+          shareEl: false,
+          counterEl: false,
+          arrowEl: true,
+          preloaderEl: true
+          };if(fromURL){if(options.galleryPIDs){for(var j=0;j<items.length;j++){if(items[j].pid==index){options.index=j;break;}}}else{options.index=parseInt(index,10)-1;}}else{options.index=parseInt(index,10);}
+          if(isNaN(options.index)){return;}
+          if(disableAnimation){options.showAnimationDuration=0;}
+          gallery=new PhotoSwipe(pswpElement,PhotoSwipeUI_Default,items,options);gallery.init();gallery.options.maxSpreadZoom = gallery.getZoomLevel();gallery.options.getDoubleTapZoom = function(isMouseClick, item) {return item.initialZoomLevel;};gallery.options.escKey=true;};var galleryElements=document.querySelectorAll(gallerySelector);for(var i=0,l=galleryElements.length;i<l;i++){galleryElements[i].setAttribute('data-pswp-uid',i+1);galleryElements[i].onclick=onThumbnailsClick;}
+          var hashData=photoswipeParseHash();if(hashData.pid&&hashData.gid){openPhotoSwipe(hashData.pid,galleryElements[hashData.gid-1],true,true);}};window.addEventListener('load', function () {initPhotoSwipeFromDOM('.gallery');}, false);</script><div class="pswp" tabindex="-1" role="dialog" aria-hidden="true"><div class="pswp__bg"></div><div class="pswp__scroll-wrap"><div class="pswp__container"><div class="pswp__item"></div><div class="pswp__item"></div><div class="pswp__item"></div></div><div class="pswp__ui pswp__ui--hidden"><div class="pswp__top-bar"><div class="pswp__counter"></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button><button class="pswp__button pswp__button--share" title="Share"></button><button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button><button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class="pswp__preloader"><div class="pswp__preloader__icn"><div class="pswp__preloader__cut"><div class="pswp__preloader__donut"></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class="pswp__share-tooltip"></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button><button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class="pswp__caption"><div class="pswp__caption__center"></div></div></div></div></div><script defer="defer" src="https://patcave.me/assets/js/prism.js?v=321a70a7524222ceadba8f8b6815ce1c"></script></body></html>

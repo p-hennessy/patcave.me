@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-04-26T05:17:14-06:00</updated>
+    <updated>2022-05-26T15:00:56-06:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -1020,6 +1020,211 @@
         </content>
     </entry>
     <entry>
+        <title>Database-Linked Dataclasses</title>
+        <author>
+            <name>Patrick Hennessy</name>
+        </author>
+        <link href="https://patcave.me/database-linked-dataclasses/"/>
+        <id>https://patcave.me/database-linked-dataclasses/</id>
+            <category term="Programming Stuff"/>
+
+        <updated>2022-05-26T15:00:56-06:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://patcave.me/media/posts/14/The-Ultimate-Guide-to-Data-Classes-in-Python-3-2.webp" alt="" />
+                    The most common use of a class in Python is acting as a data container. Throughout the development of our backend libraries at Narrative Science, we’ve seen several generations of code that attempts to make modeling this data easy. Finding a simple to use abstraction&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://patcave.me/media/posts/14/The-Ultimate-Guide-to-Data-Classes-in-Python-3-2.webp" alt="" />
+                <p>The most common use of a class in Python is acting as a data container. Throughout the development of our backend libraries at Narrative Science, we’ve seen several generations of code that attempts to make modeling this data easy.</p>
+<p>Finding a simple to use abstraction for these type of classes allows us to focus less on writing mundane classes and more on our business logic.</p>
+<p>In this post we will outline the evolution of this code and the pros and drawbacks of each approach.</p>
+<hr>
+<h2><strong>V1: Basic classes</strong></h2>
+<p>We have all been here; you write a class, and implement all the <a href="https://levelup.gitconnected.com/python-dunder-methods-ea98ceabad15">dunder</a> methods needed by that class. Simple and straight forward.</p>
+<h5><strong>Example:</strong></h5>
+<pre><code class="language-python">class User():
+    def __init__(self, fname, lname, groups):
+        if not isinstance(groups, list):
+            raise ValueError("groups is not a list!")
+        if not isinstance(fname, str):
+            raise ValueError("fname is not a str!")
+        if not isinstance(lname, str):
+            raise ValueError("lname is not a str!")
+
+        self.fname = fname
+        self.lname = lname
+        self.groups = groups
+    
+    def __repr__(self):
+        return f"User({self.fname},{self.lname})"    </code></pre>
+<h5><strong>Pros:</strong></h5>
+<ul>
+<li>This is very explicit, you can see everything this class does</li>
+<li>Basic, most likely taught in beginner Python courses</li>
+</ul>
+<h5><strong>Cons:</strong></h5>
+<ul>
+<li>Type Checking<br>Notice all the defensive code needed to handle the cases when we receive arguments with incorrect types. Now imagine this example accepted 20 properties. More than likely the author of this code just wouldn’t even bother to write this kind of type checking since it’s tedious and time consuming. However not doing so can create complex error conditions in downstream code.<br><br></li>
+<li>Database<br>Very commonly, these type of objects directly represent data from the database. <br>As it is currently written, you would need another translation layer outside the object to do your queries and create the objects as needed.<br><br></li>
+<li>Testing<strong><br></strong>You will need to write tests to make sure this code correctly rejects invalid inputs.<br><br></li>
+<li>Instantiating<strong><br></strong>In order to create an instance of this object, you need to pass <span data-token-index="1" data-reactroot="">every</span> value into the constructor:<br>
+<pre><code class="language-python">new_user = User("frank", "smith", ["group1", "group2"])
+</code></pre>
+<br>It’s worth nothing that it is possible to do some fancy Python magic to create this object out of a dictionary:
+<pre><code class="language-python">user_data = get_user_data()
+new_user = User(**user_data)</code></pre>
+</li>
+</ul>
+<p>But what if I want to dump the properties of this object <em>back</em> to JSON so we could send it over HTTP? You would have to write a method that takes every property and populates a dictionary.</p>
+<hr>
+<h2><strong>V2: Database linked classes</strong></h2>
+<p>The idea here is: what if we created objects that were aware of the database?</p>
+<h5><strong>Example:</strong></h5>
+<pre><code class="language-python">from sqlalchemy import Table, Column, VARCHAR, UUID, JSONB
+from ns_database import DatabaseObject
+
+article_table = Table(
+    "article",
+    Column("id", UUID, primary_key=True),
+    Column("name", VARCHAR(45), nullable=False),
+    Column("slug", VARCHAR(45), nullable=False),
+)
+
+class Article(DatabaseObject):
+    table = article_table
+    primary_key = app_table.id
+
+new_article = Article.create(id=UUID4(), name="Foo Bar", slug="foo-bar")
+new_article.save()<br></code></pre>
+<p>This essentially creates a class that is now able to push and pull its data from a database and functions like a normal object inside of Python.</p>
+<p>The way this DatabaseObject class works is that the properties for the class are determined by the SQL Alchemy table.</p>
+<p>DatabaseObject also implements a handful of convenient methods to help getting data in and out of the database such as: <code>create</code>, <code>get</code>, <code>save</code>, <code>update</code>, and <code>delete</code>. Each will perform the appropriate SQL query.</p>
+<h5><strong>Pros:</strong></h5>
+<ul>
+<li>We have reduced the amount of tedium from boilerplate code.</li>
+<li>Users have a database aware object without needing to write any SQL of their own.</li>
+</ul>
+<h5><strong>Cons:</strong></h5>
+<ul>
+<li>We still have the issue of having to make sure our types are correct when accepting them as parameters.</li>
+<li>We are unable to set default values for properties, so we must always provide all properties, which is tedious. This is because we’re using SQL alchemy as the source of the property names and don’t have a mechanism for passing other values in.</li>
+<li>What if someone inputs a string longer than 45 characters? We need to write code to check for that.</li>
+<li>There is an assumption that we must know the type in Python that corresponds to the SQLAlchemy type.</li>
+<li>Alongside the tests needed for the DatabaseObject class to ensure the database accessor methods work correctly, we will also need to still have tests that ensure that these classes reject invalid inputs and don’t just throw an exception from SQL alchemy.</li>
+</ul>
+<hr>
+<h2><strong>V3: Along came dataclasses</strong></h2>
+<p>Basically, a dataclass is a simple abstraction for classes that store data. It performs automatic type checking, serialization and deserialization, and implements things like <code>__eq__</code>, and gives a standard <code>__repr__</code>. This is basically what we wanted from Generation 1.</p>
+<p>There have been many libraries before this to implement the data-class such as <a href="https://www.attrs.org/en/stable/">attrs</a>, <a href="https://marshmallow.readthedocs.io/en/stable/">marshmallow</a>, and <a href="https://schematics.readthedocs.io/en/latest/">schematics</a>. It is worth noting that Python 3.7 introduced an official the <a href="https://docs.python.org/3/library/dataclasses.html">Dataclass</a> to the core library as well.</p>
+<p>The library we chose to use was <a href="https://pydantic-docs.helpmanual.io/">Pydantic</a> because it worked best with our implementation of <a href="https://fastapi.tiangolo.com/">FastAPI</a>.</p>
+<div class="resource-block resource-block--content">
+<div class="resource-block__rich-text">
+<h5><strong>Example:</strong></h5>
+<pre><code class="language-python">from enum import Enum
+from typing import Optional
+from pydantic import BaseModel, Field
+
+class User(BaseModel):
+    name: str = Field(max_length=45)
+    department: Department = Field(default=Department.engineering)
+    nickname: Optional[str]
+
+class Department(str, Enum):
+    engineering = "engineering"
+    finance = "finanace"
+</code></pre>
+<h5><strong>Pros:</strong></h5>
+<ul>
+<li>Automatic type checking</li>
+<li>Allow us to use other data structures like Enums or other models as types</li>
+<li>Ability to set contraints such as string length</li>
+<li>Ability to set default values</li>
+<li>Greatly reduced boilerplate vs Generation 1</li>
+<li>Easily readable</li>
+<li>Integration with code editors intellisense</li>
+<li>No need to write additional tests</li>
+</ul>
+<p>You can leverage other Python built-ins to do even more powerful things:</p>
+<pre><code class="language-python">class User(BaseModel):
+    first_name: str
+    last_name: str
+
+    @property
+    def email(self):
+        return f"{self.firstname[:1]}{self.last_name}@example.com"
+
+    def send_message(self, msg):
+        some_email_function(self.email, msg)
+
+...
+
+user = User("John", "Smith")
+user.send_message("hey dude!")
+</code></pre>
+<p><strong style="color: var(--headings-color); font-family: var(--font-base); font-size: 1.125em; letter-spacing: -0.03rem;">Cons:</strong></p>
+</div>
+</div>
+<ul>
+<li>These models are not database aware like Generation 2.</li>
+</ul>
+<hr>
+<h2><strong>V4: Adding a database to Pydantic</strong></h2>
+<p>Building on our idea from before about turning an ordinary class into a database aware object; we combined the benefits of <a href="https://pydantic-docs.helpmanual.io/usage/validators/">Pydantic's input validation</a> and serialization with the <a href="https://www.sqlalchemy.org/">SQL Alchemy</a> based database class from Generation 2.</p>
+<p>The result is that now we have functional ORM that works with <a href="https://fastapi.tiangolo.com/">FastAPI</a>!</p>
+<h5>Example: </h5>
+<pre><code class="language-python">from enum import Enum
+from typing import Optional
+from pydantic import BaseModel, Field
+
+from ns_database import database_model, Databases
+
+class UserIn(BaseModel):
+    name: str = Field(max_length=45)
+    department: Department = Field(default=Department.engineering)
+    nickname: Optional[str]
+
+class Department(str, Enum):
+    engineering = "engineering"
+    finance = "finanace"
+
+@database_model(table_name="users", database_name=Databases.main)
+class User(UserIn):
+    id: Optional[UUID4] = Field(primary_key=True, fetch_on_create=True)
+    created_at: Optional[datetime] = Field(fetch_on_create=True)
+    updated_at: Optional[datetime] = Field(fetch_on_create=True
+</code></pre>
+<p>We add a class decorator that will use the properties of the model as fields in the database. This means that database models will be 1:1 representations of the database itself.</p>
+<p>Using Pydantic, we are able to add additional keyword arguments to the Field function.</p>
+<h5><strong>Fetch on create / update</strong></h5>
+<p>We want our database to be the ultimate source of authority, so we rely on it to do the computation for certain fields.</p>
+<p>This is done through setting <code>fetch_on_create</code> and <code>fetch_on_update</code> which will defer to the database’s generated value when a record is created or updated respectively.</p>
+<p>All that needs to happen is your database is setup to have column defaults such as static values, subroutines, or sequences.</p>
+<h5><strong>Primary key fields</strong></h5>
+<p>Since all tables will have a primary key, each <code>database_model</code> object <em>must</em> have a primary key.</p>
+<p>Currently we are not able to have compound keys meaning your key must be a single type. This may be a situation where we can create a special type for it to allow it to be more semantic.</p>
+<p>This primary key field is also used by our data accessor method to know how to lookup a record.</p>
+<p> </p>
+<h5><strong>Pros:</strong></h5>
+<ul>
+<li>These database models get all the benefits from Generation 2 and 3!</li>
+</ul>
+<h5><strong>Cons:</strong></h5>
+<ul>
+<li>Lack of foreign key relationships may be misleading to developers. To many developers, this code is their interface to the table schema. Since we use <a href="https://alembic.sqlalchemy.org/en/latest/">Alembic</a> to manage our database schema and updates; there is actually no need to declare fields inside our database_model to be foreign keys. These are only used by SQL Alchemy in order to <em>create</em> your table schema. This does create a situation where our code and schema may not be in-sync. It is also worth noting that those foreign key constraints are still enforced by the database.</li>
+<li>Database managed fields have to be “optional”. One limitation of Pydantic is that we have to make any field that the database will manage (such as the primary_key) as Optional type. The Pydantic validation code runs before we ever make our fetch from the database. This is syntactically a bit confusing.</li>
+</ul>
+<hr>
+<h2><strong>Closing thoughts</strong></h2>
+<p>These new database model classes have greatly improved the readability of our code and reduced the amount of boilerplate we need to write for new objects which ultimately means that we spend more time worrying about our own business logic vs writing all the low level stuff classes usually need.</p>
+<p>As with most projects in software engineering, we kept making marginal improvements to the ideas until we got something awesome! I’m excited to see how this idea continues to grow to further help us achieve these same goals.</p>
+<p>You can find the full code for this here: <a href="https://github.com/NarrativeScience/pynocular">https://github.com/NarrativeScience/pynocular</a></p>
+            ]]>
+        </content>
+    </entry>
+    <entry>
         <title>Learning 3D Modeling for TF2</title>
         <author>
             <name>Patrick Hennessy</name>
@@ -1140,6 +1345,265 @@
 <figure class="gallery__item"><a href="https://patcave.me/media/posts/7//gallery/20200515140446_1-2.jpg" data-size="1680x1050"><img loading="lazy" src="https://patcave.me/media/posts/7//gallery/20200515140446_1-2-thumbnail.jpg" alt="" width="720" height="450"></a></figure>
 </div></div>
 <p>Big shoutout to Megapieman for being such a good sport and allowing me (a complete noob) to work on such an important piece of his map! We are both very happy with the end result.</p>
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Serverless SFTP in AWS</title>
+        <author>
+            <name>Patrick Hennessy</name>
+        </author>
+        <link href="https://patcave.me/serverless-sftp-in-aws/"/>
+        <id>https://patcave.me/serverless-sftp-in-aws/</id>
+            <category term="Programming Stuff"/>
+
+        <updated>2022-05-26T14:59:27-06:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://patcave.me/media/posts/13/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574.png" alt="" />
+                    At Narrative Science we believe in giving our engineers the freedom to innovate. We do this through an annual 3-day hackathon and quarterly hack days. In addition, we have an Incubation Team that works on prototyping ideas not otherwise found on our roadmap. In this post, I would like&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://patcave.me/media/posts/13/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574.png" alt="" />
+                <p>At Narrative Science we believe in giving our engineers the freedom to innovate. We do this through an annual 3-day hackathon <i>and</i> quarterly hack days. In addition, we have an Incubation Team that works on prototyping ideas not otherwise found on our roadmap. </p>
+<p>In this post, I would like to showcase one of the projects that another engineer and myself were able to complete during our most recent annual hackathon. Specifically, we were able to take one of our most critical servers and turn it into a serverless system using Amazon Transfer, Lambda, and S3.</p>
+<hr>
+<h2>What were we replacing?</h2>
+<p>Some of our clients prefer to send and receive large amounts of data at one time. We facilitate this through the use of an SFTP server. </p>
+<p>Below is a simple architecture overview:</p>
+<div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="1">
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/13/gallery/SFTP-Hack-2-3.png" data-size="799x465"><img loading="lazy" src="https://patcave.me/media/posts/13/gallery/SFTP-Hack-2-3-thumbnail.png" alt="" width="720" height="419"></a></figure>
+</div></div>
+<p>The SFTP server needs to meet a handful of high-level requirements:</p>
+<ul>
+<li>Strict user isolation</li>
+<li>High availability</li>
+<li>Encryption of data in-flight and at rest</li>
+<li><a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/DataDurability.html">Durability</a> of a client’s data</li>
+<li>Ability to run incoming files through our <a href="https://narrativescience.com/products/quill/">Quill</a> pipeline</li>
+</ul>
+<h3>Shortcomings</h3>
+<p>Being a <a href="https://www.aicpa.org/interestareas/frc/assuranceadvisoryservices/aicpasoc2report.html">SOC II (type 2)</a> compliant business, we need to apply regular security updates to our infrastructure. This can be challenging with something that needs to be highly available and has persistent state. Our existing solution used VM’s (virtual machines) and moved around large EBS (elastic block store) volumes. Each time we needed to apply updates, we would need to orchestrate the transfer of that data to ensure none was lost. This costs us a fair amount of engineering time to maintain. On a monthly basis, we would need to spend roughly 6 hours doing these updates.</p>
+<p>The SFTP server features a service (codename <i>Watchdog</i>) that runs incoming files through our Quill pipeline. It watches the file system and when files were dropped into specific directories, it tells Quill to what files to pickup for which project. Typically Quill will then place these stories back on the SFTP for delivery to the customer. Watchdog is one of the oldest pieces of software still running in production, it is not well understood by our engineers, <i>and </i>is still using Python 2.7, which will be end of life in early 2020. So at the very least, it would need to be upgraded to Python 3.x.</p>
+<p>User management was always manual. There was no way to have client support teams administer the users of the system, costing us more engineering time. Non-technical employees were required to login to the SFTP machines using SSH and manage users on a Linux VM, which is error-prone.</p>
+<hr>
+<h2>Moving to serverless</h2>
+<p>Amazon recently released their <a href="https://aws.amazon.com/sftp/">Transfer service</a>; which is a 100 percent serverless SFTP solution backed by S3 and IAM. The only thing we would really need to customize is replicating the Watchdog service with Lambda.</p>
+<p>Moving to a serverless model would mean we don’t have to spend engineering time doing security maintenance since Amazon would handle all of it.</p>
+<div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="1">
+<figure class="gallery__item"><a href="https://patcave.me/media/posts/13/gallery/SFTP-hack-1-6.png" data-size="732x466"><img loading="lazy" src="https://patcave.me/media/posts/13/gallery/SFTP-hack-1-6-thumbnail.png" alt="" width="720" height="458"></a></figure>
+</div></div>
+<h3>How this meets our requirements</h3>
+<ol>
+<li><strong>Strict user isolation</strong>. This means that each user who logs in can <i>exclusively</i> see their own files. This can be handled by IAM policies. As part of their Transfer service, AWS added a few variables to IAM that allow us to do this.</li>
+<li><strong>High availability</strong> is <a href="https://aws.amazon.com/sftp/faqs/">guaranteed by Amazon</a>. We want to provide service to our customers at all times since we never know when they will want to hit us. This comes for free as part of moving to serverless.</li>
+<li><strong>Data durability</strong>. It is critical to us that we never ever lose a client’s data, or have it become corrupted. This is also <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/DataDurability.html">guaranteed by Amazon</a>, as it is in S3.</li>
+<li><strong>Encryption of client data at rest</strong>. This is also turn-key with S3 and we have used <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html">bucket encryption</a> many times so this was super simple for us to just use.</li>
+<li><strong>Watchdog</strong>: A service that watches for file uploads and runs those files through our Quill platform asynchronously. This can be replicated by triggering a Lambda function <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html">when objects are uploaded to S3</a> in a specific place. </li>
+</ol>
+<p>A serverless Watchdog is great because it doesn’t “crash” ever. S3 Events can be fired ad nauseam at this Lambda and it will scale massively, <a href="https://aws.amazon.com/lambda/pricing/">while not costing us very much</a>. It also logs directly to a Cloudwatch Log stream, meaning we can grant engineers access to see these logs, or even set up alerts when Watchdog fails.</p>
+<p>As a bonus we are now able to completely reproduce this using Cloudformation. We could spin up as many of these servers as we need to. All we would need to do is bootstrap the users and their keys. If other products required using an SFTP server, we can easily create one in seconds.</p>
+<hr>
+<h2>Building in CloudFormation</h2>
+<p>We leveraged <a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html">AWS SAM</a> to build, package and deploy our SFTP template to CloudFormation. Below are the key resources and highlights from our template.</p>
+<p>Creating the SFTP resource is very straight forward:</p>
+<div>
+<pre><code class="language-yaml">ServerlessSFTP:
+  Type: AWS::Transfer::Server
+  Properties:
+    EndpointType: VPC_ENDPOINT
+    EndpointDetails:
+      VpcEndpointId: !Ref ServerlessSFTPVPCEndpoint
+    LoggingRole: !GetAtt SFTPLoggingRole.Arn
+    Tags:
+      - Key: Environment
+        Value: !Ref Environment
+      - Key: Platform
+        Value: !Ref Platform
+      - Key: Function
+        Value: !Ref Function       </code></pre>
+</div>
+<p>Creating a bucket is necessary if you plan to automate event triggers based on S3 actions:</p>
+<pre><code class="language-yaml">SFTPS3Bucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: !Sub ${Environment}-${Platform}-${Function}
+    AccessControl: Private
+    PublicAccessBlockConfiguration:
+      RestrictPublicBuckets: true
+      IgnorePublicAcls: true
+    BucketEncryption:
+      ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+    Tags:
+      - Key: Environment
+        Value: !Ref Environment
+      - Key: Platform
+        Value: !Ref Platform
+      - Key: Function
+        Value: !Ref Function
+      - Key: DataClassification
+        Value: Secure
+</code></pre>
+<p>It’s important to configure at least one test user to stand up alongside the server. This allows for fast and simple testing of your deployment. User setup can be a little tricky however, there are a number of different resources you’ll need to create and link together:</p>
+<ol>
+<li>An IAM Role</li>
+<li>A Managed Policy</li>
+<li>An SFTP User</li>
+</ol>
+<p>The best practice is to create a fairly open and accessible Managed Policy then utilize the SFTP User’s (scopedown) Policy property to restrict access to only a user’s home directory:</p>
+<pre><code class="language-yaml">TestUserRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: !Sub ${Environment}-${Platform}-${Function}-user
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: "Allow"
+          Principal:
+            Service:
+              - "transfer.amazonaws.com"
+          Action:
+            - "sts:AssumeRole"
+</code></pre>
+<pre><code class="language-yaml">SFTPBucketPolicy:
+  Type: AWS::IAM::ManagedPolicy
+  Properties:
+    ManagedPolicyName: !Sub ${Environment}-${Platform}-${Function}-s3
+    Roles: [!Ref TestUserRole]
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Sid: AllowListingOfUserFolder
+          Action:
+            - s3:ListBucket
+            - s3:GetBucketLocation
+          Effect: Allow
+          # Soft Reference to the Bucket to get around circular dependency
+          Resource: !Sub arn:aws:s3:::${Environment}-${Platform}-${Function}*
+        - Sid: HomeDirObjectAccess
+          Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObjectVersion
+            - s3:DeleteObject
+            - s3:GetObjectVersion
+          # Soft Reference to the Bucket to get around circular dependency
+          Resource: !Sub arn:aws:s3:::${Environment}-${Platform}-${Function}*
+</code></pre>
+<pre><code class="language-yaml">TestUser:
+  Type: AWS::Transfer::User
+  Properties:
+    UserName: !Sub ${Environment}-${Platform}-${Function}-testuser
+    HomeDirectory: !Sub /${SFTPS3Bucket}/testuser
+    # This needs to be a json string
+    Policy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "AllowListingOfUserFolder",
+                "Action": [
+                    "s3:ListBucket"
+                ],
+                "Effect": "Allow",
+                "Resource": [
+                    "arn:aws:s3:::${transfer:HomeBucket}"
+                ],
+                "Condition": {
+                    "StringLike": {
+                        "s3:prefix": [
+                            "${transfer:HomeFolder}/*",
+                            "${transfer:HomeFolder}"
+                        ]
+                    }
+                }
+            },
+            {
+                "Sid": "HomeDirObjectAccess",
+                "Effect": "Allow",
+                "Action": [
+                    "s3:PutObject",
+                    "s3:GetObject",
+                    "s3:DeleteObjectVersion",
+                    "s3:DeleteObject",
+                    "s3:GetObjectVersion",
+                    "s3:GetObjectACL",
+                    "s3:PutObjectACL"
+                ],
+                "Resource": "arn:aws:s3:::${transfer:HomeDirectory}*"
+              }
+        ]
+      }
+    Role: !GetAtt TestUserRole.Arn
+    ServerId: !GetAtt ServerlessSFTP.ServerId
+    # SshPublicKeys: REDACTED
+    Tags:
+      - Key: Environment
+        Value: !Ref Environment
+      - Key: Platform
+        Value: !Ref Platform
+      - Key: Function
+        Value: !Ref Function
+</code></pre>
+<p>Wiring up a Lambda function to trigger on S3 events is a standard use-case, however our first attempts created a few circular dependencies in the configuration in Cloudformation. The quickest solution was to use !Sub calls to build soft links between resources in the template (instead of !Ref).</p>
+<pre><code class="language-yaml">WatchdogFunction:
+  # S3 Event Driven Lambda Function
+  # Notifies Quill when Customers Upload data to the SFTP
+  Type: AWS::Serverless::Function
+  Properties:
+    FunctionName: !Sub ${Environment}-${Platform}-${Function}-watchdog
+    Handler: lambda_handler.handler
+    Runtime: python3.6
+    CodeUri: ./src/
+    Description: &gt;
+      Notifies Quill when customers upload new data to the SFTP
+    MemorySize: 1024
+    Timeout: 180
+    Environment:
+      Variables:
+        # Softlink to the Secret Name
+        SECRET_NAME: !Sub ${Environment}/${Platform}/${Function}/watchdog
+        # Softlinkk to the SFTPS3Bucket
+        CONFIG_BUCKET: !Sub ${Environment}-${Platform}-${Function}
+        CONFIG_KEY: watchdog.config
+    VpcConfig:
+      SecurityGroupIds: [!Ref WatchdogSecurityGroup]
+      SubnetIds:
+        - !If
+          - Production
+          - !FindInMap [ EnvironmentMap, "prod-quill", PrivateSubnet]
+          - !FindInMap [ EnvironmentMap, "nonprod-quill", PrivateSubnet]
+    Policies:
+      - AWSLambdaExecute # AWS Managed Policy
+      - !Ref WatchdogManagePolicy # Stack Managed Policy
+      - !Ref SFTPBucketPolicy # Stack Managed Policy
+    Events:
+      WatchdogS3Event:
+        Type: S3
+        Properties:
+          Bucket: !Ref SFTPS3Bucket
+          Events: s3:ObjectCreated:*
+    Tags:
+      Environment: !Ref Environment
+      Platform: !Ref Platform
+      Function: !Ref Function
+      Component: watchdog
+</code></pre>
+<hr>
+<h2>Challenges</h2>
+<p><strong>Price</strong>. Unfortunately, we discovered that this setup costs us slightly more to host than our previous solution, mostly because Amazon Transfer is a new service and Amazon typically charges more for new shiny things. However, S3, IAM, and Lambda combined cost almost nothing. We still believe that this project was worthwhile given that for a little more hosting cost, we have effectively zero engineering time required to maintain it. </p>
+<p><strong>Static IP Address</strong>. Many clients need to whitelist IP addresses egressing from their network. With Amazon Transfer, it does not use a static IP, nor has the ability to receive one. We would need to add some kind of proxy host like a Network Load Balancer. This would slightly bump up the price and increase the complexity a bit, but still ultimately be 100 percent serverless and low maintenance.</p>
+<hr>
+<h2>Conclusion</h2>
+<p>Thanks to the assistance of a few other intrepid engineers, we were able to complete this project in less than <i>2 working days</i>. Given how critical this system is, it is remarkable how quickly we were able to do this. Amazon has made this extremely easy to set up.</p>
+<p>We now have an easily reproducible, highly available, durable and secure SFTP server that requires zero time from engineering to maintain. The time saved in maintenance alone has made this worth it. In fact, the time it took us to complete this project was roughly the same amount of time we would spend per month just maintaining it.</p>
+<p>One big thing that was pointed out to me after we did this was about the morale surrounding our infrastructure. The SFTP server does not drive new revenue and requires engineers to do regular maintenance. Given that it would crash unexpectedly for a variety of unrelated reasons, many engineers grew to dread dealing with this server. </p>
+<p>Hackathons at Narrative Science are not always about prototyping new features or driving revenue. Sometimes we work on projects that eliminate that dread and reduce the maintenance overhead of our engineers. This ultimately frees us to focus less on maintenance and more on creating quality products for our customers.</p>
             ]]>
         </content>
     </entry>
@@ -1390,252 +1854,6 @@
 <p dir="auto">For anyone who doesn't do random hacking projects like this; I highly recommend it. I touched quite a bit of Python's breadth and learned a hell of a lot about how everything works in the language.</p>
 <p dir="auto">Most of all, the bot works! Sure, it's not perfect, there are some tweaks that it still needs; like more error handling, edge-case things, etc. But at this point; I would consider it stable enough to run it on my Discord server.","</p>
 <p dir="auto">Lately I've been reading and hearing a lot about Chat Ops. It's essentially a DevOp's practice started by <strong>Github</strong> which uses a chat service like <em>Hipchat</em> or <em>Slack</em> with a bot user to manage their team and infrastructure.</p>
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>Graduation!</title>
-        <author>
-            <name>Patrick Hennessy</name>
-        </author>
-        <link href="https://patcave.me/graduation/"/>
-        <id>https://patcave.me/graduation/</id>
-            <category term="Personal"/>
-
-        <updated>2022-04-26T05:11:18-06:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://patcave.me/media/posts/6/Columns_Jesse-10.jpg" alt="" />
-                    Today is the day I graduate from college! I think there is no better time to reflect on my college journey. Back when I graduated high school, I didn't know what I wanted to do; or where I wanted to go. I felt rather lost;&hellip;
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <img src="https://patcave.me/media/posts/6/Columns_Jesse-10.jpg" alt="" />
-                <p>Today is the day I graduate from college! I think there is no better time to reflect on my college journey.</p>
-<p><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);">Back when I graduated high school, I didn't know what I wanted to do; or where I wanted to go. I felt rather lost; and it seemed like everyone else had a solid plan.</span></p>
-<div>
-<div> </div>
-<div>How was everyone else so sure? Everyone talked about their future plans with such certainty. It blew my mind because; I knew myself that there is no way I could ever be that certain. It turns out that mostly everyone ended up changing their minds and going down as many different paths as me.</div>
-<br>
-<div>I figured it would just come to me after exposing myself to different things at a college, so I started up college immediately after high school.</div>
-<div> </div>
-<div><hr></div>
-<div>
-<h2>Freshman year at UCM</h2>
-<div>I spent my freshman year at the <a href="https://www.ucmo.edu/">University of Central Missouri</a>.</div>
-<div> <figure class="post__image post__image--right"><img loading="lazy"  src="https://patcave.me/media/posts/6//Central_Missouri_Athletics_logo.svg.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/6//responsive/Central_Missouri_Athletics_logo.svg-xs.png 300w ,https://patcave.me/media/posts/6//responsive/Central_Missouri_Athletics_logo.svg-sm.png 480w ,https://patcave.me/media/posts/6//responsive/Central_Missouri_Athletics_logo.svg-md.png 768w ,https://patcave.me/media/posts/6//responsive/Central_Missouri_Athletics_logo.svg-lg.png 1024w ,https://patcave.me/media/posts/6//responsive/Central_Missouri_Athletics_logo.svg-xl.png 1360w ,https://patcave.me/media/posts/6//responsive/Central_Missouri_Athletics_logo.svg-2xl.png 1600w"  alt="" width="311" height="223"></figure></div>
-<div>I'll be honest, I hated it there. I wanted to go to college to learn something but my peers were way more about the drinking and partying. The majority of my professors couldn't care less about students. There were so many reasons I felt like I didn't belong; and I questioned if college was for me.</div>
-<br>
-<div>I walked away from UCM with hardly anything of value. There wasn't anything really ground-breaking I learned there, it basically felt like a re-hash of high school.</div>
-<br>
-<div>I did marching band there because I had enjoyed it in high school, but it really was just unnecessary stress and I did not enjoy it at all.</div>
-<div> </div>
-<div>I was running a lot too; I had grown to love running in high school with cross country. It became a way for my to relieve stress and have a time away from everyone. Being an introverted freshmen living in the dorms can be a difficult, so I basically spent my large amount of free time that year either gaming or running. My classes were so easy that I didn't need to study very much if at all.</div>
-<br>
-<div>I thought that if this is all that college is, then why am I even going? I made the decision to drop out until I could figure things out for myself.</div>
-<div> </div>
-<div><hr></div>
-<div>
-<h2>Life as a dropout</h2>
-<div>
-<div>Of course, everyone in my life was judging me for leaving college, but I didn't care. I dropped out for good reasons. It was a nice break; and to this day I'm very glad I did it.</div>
-<br>
-<div>I worked a few jobs during this break. I worked as a deli clerk, at a doughnut shop, but probably my favorite gig I had was working as a waiter at weddings. I would only have to work once a week. The owners were super nice and made it a lot of fun. I got to see a lot of weddings and drunken toasts. The best part was we got to eat as much of the left overs that we could manage.</div>
-<br>
-<div>I took some online classes in nutrition during this break, something I've always been interested in, and something I wanted some more formal understanding of. There was a point that I thought I would become a nutritionist, or dietitian. After about eight months; I began to realize that almost everything I was learning was really subjective and that there are few things about the field that are concrete. I didn't feel like I knew anything because everything I was learning had lots of other sources that contradicted it. It's so hard to know what to believe in that field. I concluded that we just don't really know how to eat well or be healthy. We have some vague idea but that is not concrete enough for me; certainly not enough to build a career around.</div>
-<br>
-<div>I decided around May of that year that I wanted to go back to school but I was too late to apply by that time, so I just tabled the decision. In the meantime I was still working and doing my thing.</div>
-<br>
-<div>On my 21st birthday, my girlfriend at the time broke up with me because she thought I was a loser and thought frat guys were way cool. I find out later she slept with some random dude not even a week after she left for college, before we even broke up. I did not see that coming at all; at that time, we had been dating for about a year and everything was great so far as I knew. A few days later, I got fired from the deli because of something I didn't even do; and on top of that I had an extremely painful and debilitating medical condition arise. And because I got fired, my mom was on the verge of kicking me out of the house for "being too lazy". It all came out of nowhere and I was definitely not ready for it.</div>
-<div> </div>
-<div>At this point in my life; I really didn't think very highly of myself and saying I was depressed is an understatement; I probably had the worst 21st birthday you could have. When I took stock of my life; I realized that I didn't have a support network. My family has never been supportive in any way and my "friends" all vanished when I needed them most. It became abundantly clear to me that what I was doing was not working and that if things were going to get better it was going to be a result of me taking action.</div>
-<br>
-<div>As depressed as I was, all this actually made me want to go back to school even more. I had heard a lot of good things about Mizzou from various people; so I figured it was a solid choice. It was close to home, a big school with a lot of social life things to do and it sounded like it would be a lot of fun. It would be a way I could get away from all the bullshit. I needed to change and this was a huge step towards doing so. I applied to Mizzou that fall and got accepted at the beginning of December.</div>
-<br>
-<div>On the upside of all this, with the free time I had; I really got into programming. I had been a gamer for a long time; and I was playing a lot of Diablo 2 at the time. I learned programming almost out of necessity because I wanted to have a Diablo 2 bot do cool things and improve it's behavior. I reverse engineered the bot API and taught myself JavaScript in about a week. I wrote a lot of really fun scripts that allowed our Guild to become the top on BattleNet; and I very quickly became an expert on how to use the bot. It was a great project to work on to get my hands dirty with software.</div>
-<div> </div>
-<div><hr></div>
-</div>
-<div>
-<h2>Starting at Mizzou</h2>
-<figure class="post__image post__image--left"><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);"><img loading="lazy"  src="https://patcave.me/media/posts/6//1200px-Missouri_Tigers_logo.svg.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/6//responsive/1200px-Missouri_Tigers_logo.svg-xs.png 300w ,https://patcave.me/media/posts/6//responsive/1200px-Missouri_Tigers_logo.svg-sm.png 480w ,https://patcave.me/media/posts/6//responsive/1200px-Missouri_Tigers_logo.svg-md.png 768w ,https://patcave.me/media/posts/6//responsive/1200px-Missouri_Tigers_logo.svg-lg.png 1024w ,https://patcave.me/media/posts/6//responsive/1200px-Missouri_Tigers_logo.svg-xl.png 1360w ,https://patcave.me/media/posts/6//responsive/1200px-Missouri_Tigers_logo.svg-2xl.png 1600w"  alt="" width="318" height="181"></figure>I started school again in that January. </span><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);">Mizzou requires transfer students to declare a major and again I was like how am I going to be sure? I figured that since I was able to teach myself programming, I would have a taste of that major for a while; I planned to revisit the idea down the road after a few classes. </span></p>
-<p><span style="color: var(--text-editor-body-color); font-family: var(--font-base); font-size: inherit; font-weight: var(--font-weight-normal);">I declared myself a computer science major; and honestly, my initial motivation for being CS had nothing to do with career prospects or money or anything like that. It was just so I could enhance my gaming life like I had done before. There was a lot of cool hacks that I had seen or used, but didn't have the knowledge to know how they worked and I really wanted to know how that all worked.</span></p>
-<div><br>
-<div>The first 2 classes I took; we didn't really learn a lot of new groundbreaking ideas for me; and I craved more knowledge, so I started learning things outside of class just for fun. I fully embraced my own curiosity and ability to teach myself. I learned a great deal of self efficacy from that. I kept writing new scripts for my bot; but also got into the web stack. I learned some HTML and CSS and played with that a lot. I also started learning about networking so I could come up with a way to prevent the IP blacklisting that happened when Blizzard thought you were botting.</div>
-<br>
-<div>I also got into the social life at Mizzou quite a bit. Being 21, I could go out to the bars and there was always something to do; though I still really didn't feel like I fit in there. A lot of the times I was out 'partying' I really just wished I was home doing one of my nerdy hobbies.</div>
-<div> </div>
-<div><hr></div>
-</div>
-</div>
-<h2>Computer Science major</h2>
-<div>
-<div>There was a distinct point when everything just suddenly made sense for me; and I really understood how computer systems work.</div>
-<div> </div>
-<div>I took a class called "Unix OS", where we learned how the Unix file system works and how to use basic commands as well as how the operating system works on a deeper level. After about a month in that class, light bulbs turning on for me everywhere, I installed Linux on my laptop and used that for the rest of college. Living in a Linux environment; and all the information about it on the internet, allowed me to understand every little bit about the operating system that I could. A lot of the things about Linux are applicable to all systems.</div>
-<br>
-<div>It was at this point I was absolutely sure I wouldn't be changing my major again; it felt right. I was much more confident in myself and my abilities. That, and I started looking at my career prospects as a CS major and was dumbfounded by how in-demand software engineers are and how much they get paid.</div>
-<br>
-<div>One of the things about that class I really loved was how our professor would rather you be a self-learner, and didn't really grade harshly for not following an arbitrary set of rules. The class was more focused on fostering the students desire to explore. We would have an assignment; but it was for completion; and if you could demonstrate that you learned something you didn't know before. I had a few more classes like that, and looking back at it; those are the areas in my major that I'm strongest at. Big shout out to Matt Dickenson, defiantly my favorite professor at Mizzou.</div>
-<div> </div>
-<div><hr></div>
-<h2>ACM &amp; Cyber Security SIG</h2>
-<div>
-<div>From the get-go at Mizzou, I got involved with the ACM. I attended the meetings and went to a few workshops but was never as involved as I would've liked. I didn't know anyone and didn't know that such a thing as a SIG (special interest group). There was one semester that they had elected new leadership and kickstarted a lot of new things.</div>
-<br>
-<div>Out of the handful of existing SIGs, I gravitated towards the cyber security one. Not many people stuck around after the first meeting, so myself and one of my classmates basically were now leading it. I had next to no knowledge of security prior to this so being it's "leader" felt very much like imposter syndrome. But we ended up doing a lot of really cool things and messed with things you would never see in class.</div>
-<br>
-<div>I think at one point we were the largest and most active SIG; which is pretty awesome. We taught each other stuff and discussed cyber security news and shared interesting tidbits of things we saw out in the wild or elsewhere. It was a lot of fun and I got to meet a lot of cool people in the process. It's also been very beneficial to other areas of my computing knowledge; since security is everywhere, and to be able to understand some of the sophisticated attacks; you are forced to know a lot about all of the individual parts.</div>
-<br>
-<div>ACM was a great organization to join. I got to meet so many cool people and it was a place that I fit in very well. We did all kinds of fun things and everyone was super helpful. They even hosted a hackathon which for me was like a party. A whole weekend of engineers tinkering with new and interesting things, junk food galore, all nighters; sign me up!</div>
-<div> </div>
-<div><hr></div>
-<h2>Internship at Carfax</h2>
-<figure class="post__image post__image--left"><img loading="lazy"  src="https://patcave.me/media/posts/6/CarFax-Vehicle-History-Report.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/6/responsive/CarFax-Vehicle-History-Report-xs.png 300w ,https://patcave.me/media/posts/6/responsive/CarFax-Vehicle-History-Report-sm.png 480w ,https://patcave.me/media/posts/6/responsive/CarFax-Vehicle-History-Report-md.png 768w ,https://patcave.me/media/posts/6/responsive/CarFax-Vehicle-History-Report-lg.png 1024w ,https://patcave.me/media/posts/6/responsive/CarFax-Vehicle-History-Report-xl.png 1360w ,https://patcave.me/media/posts/6/responsive/CarFax-Vehicle-History-Report-2xl.png 1600w"  alt="" width="288" height="195"></figure>
-<div>
-<div>During my junior year, I went out applying for internships.</div>
-<div> </div>
-<div>I wasn't very confident in my ability to work in a "real" environment. My only non-trivial project was my Diablo bot; not really something a company would find valuable.</div>
-<div> </div>
-<div>The first time I went to the career fair was quite intimidating. I was afraid that I didn't know enough or that all the time I spent on learning random things was a wasted effort.</div>
-<br>
-<div>However, to my surprise, almost every recruiter was super nice and genuinely interested in what I had to say. I made myself a list of about 20 employers I wanted to talk to, all by priority of how much I wanted the job. I knew I'd probably stumble on my first few chats, so I picked a company low on my list first. After a handful of awkward conversations and just throwing things at the wall and seeing what sticks; I got the a good idea of what I need to do. So I went right in and talked to the one at the top of my list; Carfax.</div>
-<br>
-<div>It went great and turns out the recruiter also went to UCM. I remember walking away from that thinking that I totally nailed it. Sure enough; they brought me in for an interview. I stumbled a little bit through their programming part but I must've done something right because they ended up hiring me for the internship that summer.</div>
-<br>
-<div>I wanted to use this internship as an opportunity to get as much knowledge as I could. Working directly on production code with folks who are much better and more experienced than yourself is an excellent way to learn. I would ask so many questions to try to absorb as much as I could. As far an internships go, it was exactly what I wanted. It was close to my house in Columbia, it was within my skill set, and the work environment is very laid back and fun and I got paid pretty handsomely. It wasn't uncommon to play a game of mario kart in the middle of the day against co-workers.</div>
-<br>
-<div>At the end of that summer; I was asked if I wanted to stay on part time during my next semester. Hell yes! This was awesome, I could pick up a few extra bucks, and get some more experience.</div>
-<br>
-<div>As it turns out however; that it was a lot to handle; I was working around 25 hours / week, I had a full class load, I was running the cyber security SIG, I was partaking in the college nightlife, and trying to have a relationship. It got out of hand how little free time I had. It was not unusual for me to get about 3-4 hours of sleep per night. Defiantly the busiest semester of my life, and I really didn't like it because there were so many things I wanted to work on or play with but just simply didn't have the time.</div>
-<div> </div>
-<div><hr></div>
-</div>
-</div>
-<h2>Finally, Graduation!</h2>
-<div>
-<div><figure class="post__image post__image--left"><img loading="lazy"  src="https://patcave.me/media/posts/6/Why-Do-We-Throw-Graduation-Caps.png" sizes="(max-width: 48em) 100vw, 768px" srcset="https://patcave.me/media/posts/6/responsive/Why-Do-We-Throw-Graduation-Caps-xs.png 300w ,https://patcave.me/media/posts/6/responsive/Why-Do-We-Throw-Graduation-Caps-sm.png 480w ,https://patcave.me/media/posts/6/responsive/Why-Do-We-Throw-Graduation-Caps-md.png 768w ,https://patcave.me/media/posts/6/responsive/Why-Do-We-Throw-Graduation-Caps-lg.png 1024w ,https://patcave.me/media/posts/6/responsive/Why-Do-We-Throw-Graduation-Caps-xl.png 1360w ,https://patcave.me/media/posts/6/responsive/Why-Do-We-Throw-Graduation-Caps-2xl.png 1600w"  alt="" width="1200" height="628"></figure>I think that looking back; while I might have spent and extra 2 years to get my degree, it was well worth it. I never would have thought in high school that I would be where I am now; that's for sure.</div>
-</div>
-<div><br>
-<div> </div>
-<div>Of the many things I've learned, the most important things I learned from my time since high school was that I should just embrace who I am. There were many times I put too much pressure on myself to make a choice; or times where I didn't think too highly of myself because I let others influence me way more than I should've.</div>
-<div> </div>
-<div>I found something that I really enjoy learning about and doing. I proved to myself that I am capable of shaping my own reality and affecting positive change into my life.</div>
-</div>
-</div>
-<div> </div>
-</div>
-</div>
-</div>
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>Setting up a secure Linux Server</title>
-        <author>
-            <name>Patrick Hennessy</name>
-        </author>
-        <link href="https://patcave.me/setting-up-a-secure-linux-server/"/>
-        <id>https://patcave.me/setting-up-a-secure-linux-server/</id>
-            <category term="Programming Stuff"/>
-
-        <updated>2022-01-29T15:34:40-07:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://patcave.me/media/posts/4/linux.security.11614.jpg" alt="" />
-                    This is not a comprehensive guide; but should get you started and prevent you from getting pwned immediately. Following these small steps will make you a much harder target to compromise, and are probably not worth most hackers time. There are a lot of automated&hellip;
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <img src="https://patcave.me/media/posts/4/linux.security.11614.jpg" alt="" />
-                <p dir="auto">This is not a comprehensive guide; but should get you started and prevent you from getting pwned immediately.</p>
-<p dir="auto">Following these small steps will make you a much harder target to compromise, and are probably not worth most hackers time.</p>
-<p dir="auto">There are a lot of automated attacks going around and hitting known server cluster IP ranges looking for low hanging fruit and vulnerable servers they can exploit.</p>
-<hr>
-<h2 dir="auto">Creating a Droplet</h2>
-<p dir="auto">DigitalOcean makes it very simple to create a droplet. Once you have an account, create a droplet</p>
-<ul dir="auto">
-<li><strong>Name</strong>: Name your droplet whatever you want. This will become the <strong>hostname</strong> on the machine itself once it's created.</li>
-<li><strong>Size</strong>: Go for the cheapest one. The most it will charge you is $5 / month (a very good deal imo).</li>
-<li><strong>Location</strong>: I've found that the New York location is rather slow for me, so I usually opt for the San Francisco location.</li>
-<li><strong>Image</strong>: Most people will be comfortable with Ubuntu; so we will select that.</li>
-</ul>
-<p dir="auto">Also important to note; you should opt for using <a href="https://wiki.ubuntu.com/LTS" rel="nofollow">LTS</a> releases since they're supported for a while.</p>
-<hr>
-<h2 dir="auto">Login</h2>
-<p dir="auto">Once created; DigitalOcean will e-mail you your new login credentials.</p>
-<h3 dir="auto">From a Terminal (OSX or Linux)</h3>
-<p dir="auto">Open a terminal window and type in the following command:</p>
-<div class="highlight highlight-source-shell position-relative overflow-auto">
-<pre>ssh root@ipaddress</pre>
-</div>
-<p dir="auto">It will prompt for a password; enter the one sent to your email.</p>
-<h3 dir="auto">From Putty (Windows)</h3>
-<p dir="auto">Download <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html" rel="nofollow">PuTTy</a> if you don't have it already. PuTTy will simulate a terminal session similar to that on a Linux or OSX system.</p>
-<p dir="auto">Put in the supplied ip-address in the <code>hostname</code> field, and leave the port on <code>22</code>. Then click connect.</p>
-<p dir="auto">You will be prompted for your password; feel free to copy and paste it from the email directly. If you did everything right; you should now be logged into your DigitalOcean node as the root user!</p>
-<hr>
-<h2 dir="auto">Installing Updates</h2>
-<p dir="auto">The first thing you should do is bring all your software up to date.</p>
-<p dir="auto">DigitalOcean does pretty well keeping their images up to date; but you want to get in the habit of having the freshest updates to software on your system.</p>
-<p dir="auto">Use the following commands:</p>
-<div class="highlight highlight-source-shell position-relative overflow-auto">
-<pre>apt-get update
-apt-get upgrade</pre>
-</div>
-<p dir="auto"><strong>update</strong> will hit all the <a href="https://help.ubuntu.com/community/Repositories/Ubuntu" rel="nofollow">Ubuntu repositories</a> and refresh any package names or versions.</p>
-<p dir="auto"><strong>upgrade</strong> will upgrade any out of date packages and remove anything that is now unnecessary on your system.</p>
-<hr>
-<h2 dir="auto">Disabling Root Access</h2>
-<p dir="auto">It's a good idea to disable root user logins via SSH. Root is allowed to do literally anything on a system, so it's a dangerous account.</p>
-<hr>
-<h2 dir="auto">Add an admin (sudo) account</h2>
-<p dir="auto">A <strong>sudo</strong> user is a user on a Linux system who as the ability to perform certain root-level operations after a password prompt. <em>You should only give <code>sudo</code> access to users who absolutely need it.</em></p>
-<p dir="auto">Use the following command to add a new sudoer:</p>
-<div class="highlight highlight-source-shell position-relative overflow-auto">
-<pre>useradd -g sudo -s /bin/bash pat</pre>
-</div>
-<p dir="auto">It will prompt you for a password and email; put whatever you like there (it can be changed later if desired).</p>
-<p dir="auto">Once done; I would <em><strong>highly</strong></em> recommend starting another terminal or PuTTy session and logging in as this user to verify that you're able to login. The last thing you want is to lock yourself out.</p>
-<h3 dir="auto">Disable Root Login over SSH</h3>
-<p dir="auto">Next you'll need to stop the root user from logging in at all.</p>
-<div class="highlight highlight-source-shell position-relative overflow-auto">
-<pre>vim /etc/ssh/sshd_config</pre>
-</div>
-<p dir="auto">Look for a line that says <code>PermitRootLogin</code> and set it to <code>no</code></p>
-<p dir="auto">Then reset the SSH server:</p>
-<div class="highlight highlight-source-shell position-relative overflow-auto">
-<pre>systemctl restart sshd</pre>
-</div>
-<hr>
-<h2 dir="auto">Firewall</h2>
-<p dir="auto">Another important thing to do is to stop automated port scanning attacks on your server. At the moment, we are only using a single port for our communications, <em>22</em> for SSH. A <a href="http://en.wikipedia.org/wiki/Firewall_%28computing%29" rel="nofollow">firewall</a> can stop other hosts from connecting to those ports, hogging up system resources, and potentially exploiting unknown vulnerabilities.</p>
-<p dir="auto">You should tune the rules to your liking, but heres a good <a href="https://gist.github.com/ns-phennessy/5a3b60e41022748f5f68">boilerplate</a> to start from</p>
-<div class="highlight highlight-source-shell position-relative overflow-auto">
-<pre>wget https://gist.githubusercontent.com/ns-phennessy/5a3b60e41022748f5f68/raw/e9e96a793dd5668b8568a437e083594318a41c86/Firewall%20Script
-chmod +x Firewall<span class="pl-cce">\ </span>Script
-sudo bash Firewall<span class="pl-cce">\ </span>Script</pre>
-</div>
-<p dir="auto">The script will setup sensible defaults and leave port 22 open. <strong>IT IS VERY IMPORTANT TO NEVER CLOSE PORT 22</strong>. You <em>will</em> lock yourself out of your system if you do this.</p>
-<hr>
-<h2 dir="auto">Fail2Ban</h2>
-<p dir="auto"><a href="http://en.wikipedia.org/wiki/Fail2ban" rel="nofollow">Fail2Ban</a> is a <a href="http://en.wikipedia.org/wiki/Daemon_%28computing%29" rel="nofollow">daemon</a> that follows the authentication log and see if any IP address has too many failed login attempts, and temporarily bans them.</p>
-<p dir="auto">Install it and setup default config:</p>
-<div class="highlight highlight-source-shell position-relative overflow-auto">
-<pre>sudo apt-get install fail2ban
-sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local</pre>
-</div>
-<p dir="auto">You can now go and tweak your jail settings.</p>
-<div class="highlight highlight-source-shell position-relative overflow-auto">
-<pre>sudo vim /etc/fail2ban/jail.local</pre>
-</div>
-<p dir="auto">I like to set my <code>bantime</code> ridiculously high but give myself a <code>maxretry</code> of at least 5 over a <code>findtime</code> of about 10 minutes.</p>
-<p dir="auto">Remember that the goal is to catch brute force attacks, you need to be aware that your rules will have to reflect the kind of traffic you're seeing. A smart attacker will brute force your system slowly to avoid getting caught up in filters like this one.</p>
-<hr>
-<h2 dir="auto">Done!</h2>
-<p dir="auto">Congrats, you're setup and had your first taste with server security. Hopefully this article has given you some insight into how to setup and maintain a Linux server and not get immediately hacked</p>
             ]]>
         </content>
     </entry>
