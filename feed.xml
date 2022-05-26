@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-05-26T15:00:56-06:00</updated>
+    <updated>2022-05-26T15:18:46-06:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -613,7 +613,7 @@
             <category term="Programming Stuff"/>
             <category term="Gaming"/>
 
-        <updated>2022-01-28T22:24:02-07:00</updated>
+        <updated>2022-05-26T15:18:46-06:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/9/Screenshot_1.png" alt="" />
@@ -680,8 +680,21 @@
 <p>Now this is the part that was confusing for me at first. You need to run a local Prometheus on the server in order to publish / replicate the metrics to a remote one that does the actual aggregation. In this case, my local Prometheus published to the one hosted by Grafana Cloud. </p>
 <p>On a small aside, I'll also say the Grafana Cloud docs are fantastic for setting this up and I had absolutely no issues getting going with it.</p>
 <p>Below are snippets from my config files (node_exporter needs no config):</p>
-<pre><span style="text-decoration: underline;"><em><strong>process_exporter.yml<br></strong></em></span><br>---<br>process_names:<br>  - name: "srcds_linux"<br>    exe:<br>    - tmux<br>    cmdline:<br>    - new -d -s tf .*</pre>
-<pre><span style="text-decoration: underline;"><em><strong>srcds_exporter.yml</strong></em></span><br><br>---<br>options:<br>  rcontimeout: 60s<br>  cachetimeout: 15s<br>servers:<br>  us.tf2maps.net:<br>    address: 172.93.228.253:27015<br>    rconpassword: ***password***</pre>
+<pre><code class="language-yaml">process_names:
+  - name: "srcds_linux"
+    exe:
+    - tmux
+    cmdline:
+    - new -d -s tf .*
+</code></pre>
+<pre><code class="language-yaml">options:
+  rcontimeout: 60s
+  cachetimeout: 15s
+servers:
+  us.tf2maps.net:
+    address: 172.93.228.253:27015
+    rconpassword: ***password***
+</code></pre>
 <hr>
 <h2>Logging Admin Actions</h2>
 <p>TF2 servers often run modding platforms that come with an ecosystem of plugins for doing administrative actions. One very popular platform is called <a href="https://www.sourcemod.net/">SourceMod</a>. Many of the built-in plugins will log important information like administrator actions to a log file that I can parse. Obviously logs are not like metrics that can be measured every minute, log files get new lines at random intervals, so it requires a different tool.</p>
@@ -689,7 +702,33 @@
 <p>To actually export to Loki, you need to run a Prometheus style exporter called <a href="https://grafana.com/docs/loki/latest/clients/promtail/">Promtail</a>. </p>
 <p>Now, most people who know me know that I'm a wizard with <a href="https://en.wikipedia.org/wiki/Regular_expression">Regular Expressions</a>, though admittedly this one took me a while to get right. Whoever created this log format clearly did not intend for it to be parsed. (Aside: Lea Verou has a great <a href="http://projects.verou.me/regexplained/">RegEx testing tool</a> that I highly recommend for this kind of task.)</p>
 <p>Below is the full config I used to parse the SourceMod log files. (I would have really preferred JSON, but SourceMod has been around since before JSON was a thing)</p>
-<pre>  pipeline_stages:<br>  - match:<br>      selector: '{job="sourcemod"}'<br>      stages:<br>      - regex:<br>          expression: 'L (?P&lt;timestamp&gt;\d{2}\/\d{2}\/\d{4} - \d{2}:\d{2}:\d{2}): \[(?P&lt;plugin&gt;.*\.smx)\] \"(?P&lt;user_name&gt;[A-Za-z0-9\ ]+)&lt;\d+&gt;&lt;(?P&lt;steam_id&gt;\[U:[0-9]:[0-9]+\])&gt;&lt;[\d\w]{0,}&gt;" (?P&lt;message&gt;.*)'<br>      - labels:<br>          plugin:<br>          user_name:<br>          steam_id:<br>      - timestamp:<br>          format: '01/02/2006 - 15:04:05'<br>          source: timestamp<br>      - output:<br>          source: message<br>  - match:<br>      selector: '{job="sourcemod",plugin!~".*.smx"}'<br>      stages:<br>      - drop:<br>          expression: ".*"<br><br>  static_configs:<br>  - labels:<br>      job: sourcemod<br>      __path__: /home/tf/tf/addons/sourcemod/logs/L*.log</pre>
+<pre><code class="language-yaml">---
+  pipeline_stages:
+  - match:
+      selector: '{job="sourcemod"}'
+      stages:
+      - regex:
+          expression: 'L (?P\d{2}\/\d{2}\/\d{4} - \d{2}:\d{2}:\d{2}): \[(?P.*\.smx)\] \"(?P[A-Za-z0-9\ ]+)&lt;\d+&gt;&lt;(?P\[U:[0-9]:[0-9]+\])&gt;&lt;[\d\w]{0,}&gt;" (?P.*)'
+      - labels:
+          plugin:
+          user_name:
+          steam_id:
+      - timestamp:
+          format: '01/02/2006 - 15:04:05'
+          source: timestamp
+      - output:
+          source: message
+  - match:
+      selector: '{job="sourcemod",plugin!~".*.smx"}'
+      stages:
+      - drop:
+          expression: ".*"
+
+  static_configs:
+  - labels:
+      job: sourcemod
+      __path__: /home/tf/tf/addons/sourcemod/logs/L*.log
+</code></pre>
 <p>This basically pulls out the timestamp, plugin name, user name, their steam id, and the actual log message.</p>
 <hr>
 <h2>Configuring Grafana</h2>
@@ -699,7 +738,9 @@
 <figure class="gallery__item"><a href="https://patcave.me/media/posts/9/gallery/Screenshot_4.png" data-size="1544x931"><img loading="lazy" src="https://patcave.me/media/posts/9/gallery/Screenshot_4-thumbnail.png" alt="" width="720" height="434"></a></figure>
 </div></div>
 <p>For the actual dashboard panels, I wanted to be able to filter by host. You basically just setup a dashboard variable and then you can use it as a variable in your queries:</p>
-<pre>srcds_playercount_humans{instance=~"$host"}<br>time() - namedprocess_namegroup_oldest_start_time_seconds{instance=~"$host"}</pre>
+<pre><code class="language-yaml">srcds_playercount_humans{instance=~"$host"}
+time() - namedprocess_namegroup_oldest_start_time_seconds{instance=~"$host"}
+</code></pre>
 <p>Most panels were very easy to setup. Infact most of them were just simple 1 liners just like the queries in the above code.</p>
 <p>The Admin log required 3 transforms to display how I wanted. Filtering out unwanted messages, setting up the table fields, and a labels to fields transform.</p>
 <div class="gallery-wrapper"><div class="gallery"  data-is-empty="false" data-columns="3">
