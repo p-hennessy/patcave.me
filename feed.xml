@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2023-01-11T20:06:54-07:00</updated>
+    <updated>2023-01-11T22:36:06-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -18,12 +18,12 @@
         <id>https://patcave.me/managing-iam-more-sanely/</id>
             <category term="Programming Stuff"/>
 
-        <updated>2023-01-11T20:06:54-07:00</updated>
+        <updated>2023-01-11T22:36:06-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/11/identity-access-management-iam-2.png" alt="" />
                     <p><a href="https://aws.amazon.com/iam/" target="_blank" rel="noopener noreferrer">AWS IAM</a> is the global permissions system that AWS uses. People are often mystified by how it works and often end up just giving everything <code>*.*</code> permissions. </p>
-<p>In this post I'll discuss things I learned while managing the IAM configuration at <a href="https://en.wikipedia.org/wiki/Narrative_Science" target="_blank" rel="noopener noreferrer">Narrative Science</a> and hopefully allow you to manage your IAM account in a much for sane and scalable way.</p>
+<p>In this post I'll discuss things I learned while managing the IAM configuration at <a href="https://en.wikipedia.org/wiki/Narrative_Science" target="_blank" rel="noopener noreferrer">Narrative Science</a> and hopefully allow you can learn from our failures so you can manage your IAM account in a much for sane and scalable way.</p>
 
                 ]]>
             </summary>
@@ -31,7 +31,7 @@
             <![CDATA[
                     <img src="https://patcave.me/media/posts/11/identity-access-management-iam-2.png" alt="" />
                 <p><a href="https://aws.amazon.com/iam/" target="_blank" rel="noopener noreferrer">AWS IAM</a> is the global permissions system that AWS uses. People are often mystified by how it works and often end up just giving everything <code>*.*</code> permissions. </p>
-<p>In this post I'll discuss things I learned while managing the IAM configuration at <a href="https://en.wikipedia.org/wiki/Narrative_Science" target="_blank" rel="noopener noreferrer">Narrative Science</a> and hopefully allow you to manage your IAM account in a much for sane and scalable way.</p>
+<p>In this post I'll discuss things I learned while managing the IAM configuration at <a href="https://en.wikipedia.org/wiki/Narrative_Science" target="_blank" rel="noopener noreferrer">Narrative Science</a> and hopefully allow you can learn from our failures so you can manage your IAM account in a much for sane and scalable way.</p>
 <hr>
 <h2>IAM Primer</h2>
 <figure class="post__image post__image--right"><img loading="lazy"  src="https://cdn.worldvectorlogo.com/logos/aws-iam.svg" data-is-external-image="true"  alt="" width="81" height="155"></figure>IAM is composed of a few primitives:</p>
