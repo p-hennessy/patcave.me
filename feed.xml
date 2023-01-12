@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2023-01-11T19:22:54-07:00</updated>
+    <updated>2023-01-11T20:06:54-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -18,11 +18,12 @@
         <id>https://patcave.me/managing-iam-more-sanely/</id>
             <category term="Programming Stuff"/>
 
-        <updated>2023-01-11T19:22:54-07:00</updated>
+        <updated>2023-01-11T20:06:54-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/11/identity-access-management-iam-2.png" alt="" />
                     <p><a href="https://aws.amazon.com/iam/" target="_blank" rel="noopener noreferrer">AWS IAM</a> is the global permissions system that AWS uses. People are often mystified by how it works and often end up just giving everything <code>*.*</code> permissions. </p>
+<p>In this post I'll discuss things I learned while managing the IAM configuration at <a href="https://en.wikipedia.org/wiki/Narrative_Science" target="_blank" rel="noopener noreferrer">Narrative Science</a> and hopefully allow you to manage your IAM account in a much for sane and scalable way.</p>
 
                 ]]>
             </summary>
@@ -30,7 +31,6 @@
             <![CDATA[
                     <img src="https://patcave.me/media/posts/11/identity-access-management-iam-2.png" alt="" />
                 <p><a href="https://aws.amazon.com/iam/" target="_blank" rel="noopener noreferrer">AWS IAM</a> is the global permissions system that AWS uses. People are often mystified by how it works and often end up just giving everything <code>*.*</code> permissions. </p>
-
 <p>In this post I'll discuss things I learned while managing the IAM configuration at <a href="https://en.wikipedia.org/wiki/Narrative_Science" target="_blank" rel="noopener noreferrer">Narrative Science</a> and hopefully allow you to manage your IAM account in a much for sane and scalable way.</p>
 <hr>
 <h2>IAM Primer</h2>
@@ -59,8 +59,8 @@
 <p>Seems pretty straight forward, why is this naïve?</p>
 <p>Well AWS has some annoying limitations:</p>
 <ul>
-<li>Users not have more than 10 policies attached.</li>
-<li>Users can not be a member of more than 10 groups.</li>
+<li>Users cannot have more than 10 policies attached.</li>
+<li>Users cannot be a member of more than 10 groups.</li>
 <li>User policy size cannot exceed 2,048 characters.</li>
 <li>Role policy size cannot exceed 10,240 characters.</li>
 <li>Group policy size cannot exceed 5,120 characters.</li>
@@ -204,7 +204,7 @@ resource "aws_iam_role_policy_attachment" "app_admin_attach" {
 }        
 </code></pre>
 <hr>
-<h2>Permission Scopedown for Services</h2>
+<h2>IAM Scopedown for Service Roles</h2>
 <figure class="post__image post__image--left"><img loading="lazy"  src="https://www.openaccessgovernment.org/wp-content/uploads/2019/09/dreamstime_xxl_123552072.jpg" data-is-external-image="true"  width="351" height="233"></figure>A distinction that should be made is that so far we've focused this on<em> IAM for Humans</em>: permissions that apply to employee IAM accounts, but haven't really touched on<em> IAM for Services</em>: permissions granted to EC2 instances and the like.</p>
 <p>We never ended up putting this into action at Narrative Science but I stand by the design and idea. </p>
 <p>With services, it can be quite tedious to know <em>all</em> the permissions exhaustively that a service will need ahead of time. Even in earnest, most humans will miss a lot because AWS has just so many services and caveats. But we also need to reach least privilege access for services, is there a way to do this so it takes the burden off the developer <em>and </em>can allow you to achieve least privilege? </p>
