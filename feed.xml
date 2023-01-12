@@ -3,7 +3,7 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2023-01-11T19:20:54-07:00</updated>
+    <updated>2023-01-11T19:22:54-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
@@ -14,11 +14,11 @@
         <author>
             <name>Patrick Hennessy</name>
         </author>
-        <link href="https://patcave.me/how-to-not-lose-your-sanity-with-aws-iam-permissions/"/>
-        <id>https://patcave.me/how-to-not-lose-your-sanity-with-aws-iam-permissions/</id>
+        <link href="https://patcave.me/managing-iam-more-sanely/"/>
+        <id>https://patcave.me/managing-iam-more-sanely/</id>
             <category term="Programming Stuff"/>
 
-        <updated>2023-01-11T19:20:54-07:00</updated>
+        <updated>2023-01-11T19:22:54-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/11/identity-access-management-iam-2.png" alt="" />
