@@ -3,12 +3,224 @@
     <title>The Patcave</title>
     <link href="https://patcave.me/feed.xml" rel="self" />
     <link href="https://patcave.me" />
-    <updated>2022-05-26T15:21:09-06:00</updated>
+    <updated>2023-01-11T19:20:54-07:00</updated>
     <author>
         <name>Patrick Hennessy</name>
     </author>
     <id>https://patcave.me</id>
 
+    <entry>
+        <title>Managing IAM more sanely</title>
+        <author>
+            <name>Patrick Hennessy</name>
+        </author>
+        <link href="https://patcave.me/how-to-not-lose-your-sanity-with-aws-iam-permissions/"/>
+        <id>https://patcave.me/how-to-not-lose-your-sanity-with-aws-iam-permissions/</id>
+            <category term="Programming Stuff"/>
+
+        <updated>2023-01-11T19:20:54-07:00</updated>
+            <summary>
+                <![CDATA[
+                        <img src="https://patcave.me/media/posts/11/identity-access-management-iam-2.png" alt="" />
+                    <p><a href="https://aws.amazon.com/iam/" target="_blank" rel="noopener noreferrer">AWS IAM</a> is the global permissions system that AWS uses. People are often mystified by how it works and often end up just giving everything <code>*.*</code> permissions. </p>
+
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                    <img src="https://patcave.me/media/posts/11/identity-access-management-iam-2.png" alt="" />
+                <p><a href="https://aws.amazon.com/iam/" target="_blank" rel="noopener noreferrer">AWS IAM</a> is the global permissions system that AWS uses. People are often mystified by how it works and often end up just giving everything <code>*.*</code> permissions. </p>
+
+<p>In this post I'll discuss things I learned while managing the IAM configuration at <a href="https://en.wikipedia.org/wiki/Narrative_Science" target="_blank" rel="noopener noreferrer">Narrative Science</a> and hopefully allow you to manage your IAM account in a much for sane and scalable way.</p>
+<hr>
+<h2>IAM Primer</h2>
+<figure class="post__image post__image--right"><img loading="lazy"  src="https://cdn.worldvectorlogo.com/logos/aws-iam.svg" data-is-external-image="true"  alt="" width="81" height="155"></figure>IAM is composed of a few primitives:</p>
+<ul>
+<li>Roles</li>
+<li>Policies</li>
+<li>Groups</li>
+<li>Users</li>
+</ul>
+<p>Roles, Groups and Users can all have policies attached to them. Groups are composed of multiple Users. For example, you could have a <code>db-admin</code> group that has the common permissions needed for that task, and users can be added or removed easily from it.</p>
+<p>Users and Roles are the entities that <a href="https://www.okta.com/identity-101/authentication-vs-authorization/" target="_blank" rel="noopener noreferrer">authenticate</a> with AWS. There's a lot of ways this can be done but most commonly it's either an EC2 instance with a Role applied, or an Employee with an access key.</p>
+<p>Policies are where the rubber hits the road. When you author a policy, you can say to allow or deny access to a resource (though <em>not</em> allowing something is an implicit deny).</p>
+<p>Here is AWS's official documentation on the subject:<br><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_access-management.html">https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_access-management.html</a></p>
+<p>It will also be important to understand ARN's (Amazon Resource Identifiers) as they are used extensively in IAM policy documents:<br><a href="https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html">https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html</a></p>
+<hr>
+<h2>Security Objectives</h2>
+<ul>
+<li><a href="https://www.cyberark.com/what-is/least-privilege/" target="_blank" rel="noopener noreferrer">Least privilege</a> access:<br>In short, only granting permissions to the resources and actions an entity will need to perform. The idea here is that having credentials compromised doesn't allow an attacker to do anything they want.</li>
+<li>Easy to administer in a fast changing environment.<br>Employee turn over, new projects coming online, etc</li>
+<li>In a multiple account setup, have a single user account for each employee</li>
+</ul>
+<hr>
+<h2>Naïve Solution #1</h2>
+<p>One of the first solutions we used at Narrative Science, you just go through all the resources an entity needs access to and which actions they need and grant them. This is a "grant-only" solution, so never use a deny in these policies.</p>
+<p>Seems pretty straight forward, why is this naïve?</p>
+<p>Well AWS has some annoying limitations:</p>
+<ul>
+<li>Users not have more than 10 policies attached.</li>
+<li>Users can not be a member of more than 10 groups.</li>
+<li>User policy size cannot exceed 2,048 characters.</li>
+<li>Role policy size cannot exceed 10,240 characters.</li>
+<li>Group policy size cannot exceed 5,120 characters.</li>
+</ul>
+<p>These might seem like a lot of wiggle room at first but you'll find very quickly that you start running out and have to be overly permissive to fit within these bounds, especially if your team has generalists that perform multiple job functions.</p>
+<p>If a user is already maxed out on groups and policies, but needs permission to perform a certain function for a small period of time (privilege escalation), what do you do? Well I guess we just drop one they don't need at that time and revert it later. You'll need some way of tracking that escalation and reminder to deescalate when they're done, which will almost certainly be required for compliance anyway.</p>
+<p>At best this is an annoying burden on the admin team managing the user permission granting. At worst this will just lead to that team getting fed up and granting way overly permissive permissions.</p>
+<hr>
+<h2>Naïve Solution #2</h2>
+<p>Lets try the opposite; being overly permissive and having explicit deny's on certain resources. On the surface this seems reasonable since its probably easier to state what you <i>don't</i> want to grant access to vs what you do.</p>
+<p>Say for example you want engineers to have free access of a lower environment, but want to deny all of production. Well if you have good resource tagging, you can mostly deny by anything with a production tag or having <code>prod</code> somewhere in the ARN.</p>
+<p>This also very quickly becomes a mess and doesn't save that many characters in your policy documents after its all said and done. Some resources require you to be able to have read / list access, otherwise the UI is unusable. One example is CloudFormation having to have read / list permissions on all resources but also you have to deny any update access to production stacks specifically. But do you then deny CreateStack access in CloudFormation too? </p>
+<p>There's also a huge wrinkle here; you cannot allow users to create IAM policies because they can just create a role that grants higher access and allow themselves to be able to <a href="https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html" target="_blank" rel="noopener noreferrer">assume that role</a>. But then how do you allow one to make IAM policies that are deployed with a CloudFormation stack?</p>
+<hr>
+<h2>A Better Solution</h2>
+<p>First of all, one of the biggest issues we had was that we were running both our lower environment and production environments in the same AWS account. We thought that it was good to be diligent with tagging and resource naming but that didn't really help us here for the reasons listed in the last section; even though its still really great to be diligent with resource naming and tagging for billing and clarity of communication.</p>
+<p>AWS allows an <a href="https://aws.amazon.com/organizations/" target="_blank" rel="noopener noreferrer">Organization</a> to have multiple accounts associated with it. IAM doesn't do well trying to isolate resources in the same AWS account, so first order of business; isolate your production resources in it's own AWS account, then you can focus on access control to that account specifically.<br><br>In our Organization, we setup a security account where all the IAM user accounts are, a non-production account where users were granted almost complete admin access, and a production account where access was extremely locked down.</p>
+<p>Before we go further, we need to understand a 2 advanced AWS IAM features:</p>
+<ul>
+<li><a href="https://docs.aws.amazon.com/images/IAM/latest/UserGuide/images/permissions_boundary.png" target="_blank" rel="noopener noreferrer">Permission Boundary's</a><br>You can basically grant a wider array of access, then with a boundary policy, restrict the access to only the resources in that boundary. Think of it like a Venn diagram of permissions:<br><br><img loading="lazy" src="https://docs.aws.amazon.com/images/IAM/latest/UserGuide/images/EffectivePermissions-session-boundary-id.png" data-is-external-image="true"  width="292" height="243"><br><br></li>
+<li><a href="https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html" target="_blank" rel="noopener noreferrer">Assume Role</a><br>An IAM user can inhabit the permissions of a Role, but only the permissions applied to that role itself. <br>Both the UI and CLI are able to do these role assumptions, and can be done in a way that requires MFA (big plus for compliance). This feature is what will enable us to have single IAM accounts per employee but allow them to have permissions in multiple AWS accounts. </li>
+</ul>
+<p>So the idea here is; you create roles with open permissions that you then restrict down with a permission boundary, creating much more strict effective permissions; and then users can inhabit those roles.<br><br>You can define these roles any way you want, it will vary greatly depending on your organization and this can obviously be a bit subjective. We decided to define our roles roughly along discrete job functions which allows for an employee to inhabit the role needed to complete a certain task without having to grant full admin (unless that is what is needed).<br><br>For our production account, we created the following roles:</p>
+<ul>
+<li><strong>Admin </strong>- Complete god permissions only granted to a few, mostly just myself.</li>
+<li><strong>ProdAdmin </strong>- Almost the same as god permissions except for it cant change IAM roles, view billing or make account wide changes. Used for team leads / architects<br><strong>OnCall </strong>- Basically a copy of ProdAdmin except that we wanted to keep this distinct incase these 2 roles diverged. Also its more obvious what it is.</li>
+<li><strong>ProdEngineer </strong>- Allows engineers to view the status of deployments, read log files, view alarm states. </li>
+<li><strong>CustomerSuccess</strong> - Allow our customer success team to manage our Serverless SFTP and handle issues relating to customer data delivery. They basically only had access to a few S3 buckets.</li>
+</ul>
+<p>If a new job function should arise, then you can of course make new roles to suit those needs. We were working on adding a new one right before we were <a href="https://narrativescience.com/resource/blog/narrative-science-signs-agreement-to-be-acquired-by-salesforce" target="_blank" rel="noopener noreferrer">acquired by Salesforce</a> that would allow some of our engineers to train and maintain production ML models; just as an example.</p>
+<p>The advantage of this setup is that not only do you not run into annoying AWS limitations, but also you can grant or remove access to individual users as needed. This can get out of hand to manage manually, so we codified all of our IAM using Git and Terraform. This had the side effect of also allowing engineers to request a role escalation via Git that we could gate with <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners" target="_blank" rel="noopener noreferrer">CodeOwners</a>, and have an audit trail for compliance.</p>
+<p class="msg msg--highlight  msg--info"><strong>Side note</strong>: CloudTrail does log when a user assumes a role, and will show that role's session id in any logs done while that user is in that role; so you can audit who did what and when. </p>
+<h3>Example Code</h3>
+<p>Enough of me describing the theory of this; here's some actual code. I'm not allowed to share the exact code (for obvious reasons), however here is an example to demonstrate how we used permission boundaries. Basically think of these 2 policy documents in a Venn diagram. </p>
+<p>Role Permissions:</p>
+<pre><code class="language-json">{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:Describe*",
+                "cloudformation:EstimateTemplateCost",
+                "cloudformation:Get*",
+                "cloudformation:List*",
+                "cloudformation:ValidateTemplate",
+                "cloudformation:Detect*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}    
+</code></pre>
+<p>Role Boundary:</p>
+<pre><code class="language-json">{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:*"
+            ],
+            "Resource": [
+                "arn:aws:cloudformation:*:ACCOUNT_ID_REDACTED:stack/prod-app-*/*",
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:Describe*",
+                "cloudformation:List*",
+                "cloudformation:Get*",
+                "cloudformation:GetTemplateSummary",
+                "cloudformation:CreateChangeSet",
+                "cloudformation:ExecuteChangeSet"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}  
+</code></pre>
+<p>Terraform Role Creation Module:</p>
+<pre><code class="language-hcl">variable "app_admins" {
+    type = list(string)
+    default = [
+        "user1",
+        "user2",
+        "user3",
+        "user4",
+        "user5"
+    ]
+}
+
+resource "aws_iam_role" "app_admin" {
+    name = "app_admin"
+    path = "/humans/"
+    max_session_duration = 3600
+
+    assume_role_policy = data.aws_iam_policy_document.app_admin_trust_policy.json
+    permissions_boundary  = aws_iam_policy.app_admin_boundry.arn
+}
+
+data "aws_iam_policy_document" "app_admin_trust_policy" {
+    statement {
+        principals {
+            type = "AWS"
+            identifiers = [
+                for user in var.app_admins :
+                "arn:aws:iam::ACCOUNT_ID_REDACTED:user/${user}"
+            ]
+        }
+
+        actions = [
+            "sts:AssumeRole",
+            "sts:AssumeRoleWithWebIdentity"
+        ]
+
+        condition {
+            test = "Bool"
+            variable = "aws:MultiFactorAuthPresent"
+            values = ["true"]
+        }
+    }
+}
+
+resource "aws_iam_policy" "app_admin" {
+    name = "app_admin"
+    policy = file("${path.module}/../policies/app_admin.json")
+}
+
+resource "aws_iam_policy" "app_admin_boundry" {
+    name = "app_admin_boundry"
+    policy = file("${path.module}/../permission_boundries/app_boundry.json")
+}
+
+resource "aws_iam_role_policy_attachment" "app_admin_attach" {
+    role = aws_iam_role.app_admin.name
+    policy_arn = aws_iam_policy.app_admin.arn
+}        
+</code></pre>
+<hr>
+<h2>Permission Scopedown for Services</h2>
+<figure class="post__image post__image--left"><img loading="lazy"  src="https://www.openaccessgovernment.org/wp-content/uploads/2019/09/dreamstime_xxl_123552072.jpg" data-is-external-image="true"  width="351" height="233"></figure>A distinction that should be made is that so far we've focused this on<em> IAM for Humans</em>: permissions that apply to employee IAM accounts, but haven't really touched on<em> IAM for Services</em>: permissions granted to EC2 instances and the like.</p>
+<p>We never ended up putting this into action at Narrative Science but I stand by the design and idea. </p>
+<p>With services, it can be quite tedious to know <em>all</em> the permissions exhaustively that a service will need ahead of time. Even in earnest, most humans will miss a lot because AWS has just so many services and caveats. But we also need to reach least privilege access for services, is there a way to do this so it takes the burden off the developer <em>and </em>can allow you to achieve least privilege? </p>
+<p>The solution here I think is quite elegant. I call it IAM Scopedown.</p>
+<p>Basically, a new project that is not yet in production is allowed to run for a time, say 1 month (but the duration is somewhat arbitrary). Initially you grant a sane but knowingly over permissive set of permissions to the app. CloudTrail will log the actions that project did during that time. Then you can view those logs and see which permissions the app actually needed and edit your IAM policies based on that.</p>
+<p>This is ripe for a script isnt it? Well good news, one exists for this very thing! Enter <a href="https://github.com/duo-labs/cloudtracker" target="_blank" rel="noopener noreferrer">Cloudtracker</a>.</p>
+<p>To further on this idea; I would have automation run this script and send IAM scopedown suggestions to the team managing the project; ideally with the exact output needed for an IAM policy document. This is more of a "eventually least privilege" solution; which is far better than what usually happens where people give up and grant it way too much.</p>
+<p>It is possible to have this tool automatically scope down service policies live in production, but I'm wary of not having a human involved in something that is likely to brick production in unexpected ways; though with time and developing on this idea further, I think that is feasible.<br><br>This scopedown procedure can probably also be applied to IAM for Humans but just because something goes unused doesn't necessarily mean it wont have need in the future. This is why I make the distinction between Services and Humans, since they tend to have big differences in their security needs.</p>
+<hr>
+<h2>Conclusion</h2>
+<p>Using a few advanced IAM features and a little bit of clever design, you can make your IAM setup a LOT less tedious to deal with, and reasonably achieve least privilege. </p>
+<p>I have to give some credit to Netflix engineers on their "security pizza" talk. I built on a lot of ideas from this talk:<br><br><div class="post__iframe"><iframe loading="lazy" width="560" height="314" src="https://www.youtube.com/embed/aVVX8hV_ywI" allowfullscreen="allowfullscreen" data-mce-fragment="1"></iframe></div>
+<p> </p>
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Disaster Averted</title>
         <author>
@@ -19,11 +231,12 @@
             <category term="Programming Stuff"/>
             <category term="Gaming"/>
 
-        <updated>2022-04-26T05:16:01-06:00</updated>
+        <updated>2023-01-11T19:01:18-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/12/blueprints.png" alt="" />
-                    I have been Technical Staff at TF2Maps.net for about a year as of writing this. One of the big things that bothered me when I first got onboard was how disorganized and chaotic the state of the infrastructure was. There wasn't a lot of it&hellip;
+                    <p>I have been Technical Staff at <a href="https://tf2maps.net">TF2Maps.net</a> for about a year as of writing this. One of the big things that bothered me when I first got onboard was how disorganized and chaotic the state of the infrastructure was. There wasn't a lot of it but it was old and fragile, and soon to be some serious hardware issues that needed to be addressed.</p>
+
                 ]]>
             </summary>
         <content type="html">
@@ -210,17 +423,19 @@
         <id>https://patcave.me/my-choice-tools-for-cloud-engineering/</id>
             <category term="Programming Stuff"/>
 
-        <updated>2022-04-21T03:55:42-06:00</updated>
+        <updated>2023-01-11T19:01:41-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/10/cover-2.png" alt="" />
-                    I'm an engineer, which means I love my tools and there's some tools I hate. I guess that comes with the territory. This is the collection of tools I try to use anytime I can for Cloud Engineering tasks. Ill format this by category, and&hellip;
+                    <p><a href="https://www.youtube.com/watch?v=SNgNBsCI4EA" target="_blank" rel="noopener noreferrer">I'm an engineer</a>, which means I love my tools and there's some tools I hate. I guess that comes with the territory. This is the collection of tools I try to use anytime I can for Cloud Engineering tasks.</p>
+
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://patcave.me/media/posts/10/cover-2.png" alt="" />
                 <p><a href="https://www.youtube.com/watch?v=SNgNBsCI4EA" target="_blank" rel="noopener noreferrer">I'm an engineer</a>, which means I love my tools and there's some tools I hate. I guess that comes with the territory. This is the collection of tools I try to use anytime I can for Cloud Engineering tasks.</p>
+
 <p>Ill format this by category, and list out my likes and dislikes about the tool. Realize that each one of these is just my <em>opinion</em> and I'm not saying they're the only tool anyone should ever use, people have different preferences and needs afterall. Enjoy!</p>
 <hr>
 <h2>Infrastructure as Code: <em><a href="https://www.terraform.io/" target="_blank" rel="noopener noreferrer">Terraform</a></em></h2>
@@ -523,11 +738,14 @@
             <category term="Level Design"/>
             <category term="Gaming"/>
 
-        <updated>2022-01-28T22:43:05-07:00</updated>
+        <updated>2023-01-11T19:02:34-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/5/Pd_farmageddon.png" alt="" />
-                    Okay okay, maybe that title is a bit of an overstatement, but I have very exciting news! Among my many hobbies; one I've been doing since the beginning of the pandemic is level design, specifically for the game: Team Fortress 2. I'm excited to share&hellip;
+                    <p>Okay okay, maybe that title is a bit of an overstatement, but I have very exciting news!</p>
+<p>Among my many hobbies; one I've been doing since the beginning of the pandemic is level design, specifically for the game: Team Fortress 2.</p>
+<p>I'm excited to share that today Valve purchased a level that I worked on (with a team of 8 others)!</p>
+
                 ]]>
             </summary>
         <content type="html">
@@ -536,6 +754,7 @@
                 <p>Okay okay, maybe that title is a bit of an overstatement, but I have very exciting news!</p>
 <p>Among my many hobbies; one I've been doing since the beginning of the pandemic is level design, specifically for the game: Team Fortress 2.</p>
 <p>I'm excited to share that today Valve purchased a level that I worked on (with a team of 8 others)!</p>
+
 <p>Here is the Steam Workshop link: <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2237224308">https://steamcommunity.com/sharedfiles/filedetails/?id=2237224308</a></p>
 <hr>
 <h2>Farmageddon</h2>
@@ -613,11 +832,13 @@
             <category term="Programming Stuff"/>
             <category term="Gaming"/>
 
-        <updated>2022-05-26T15:18:46-06:00</updated>
+        <updated>2023-01-11T19:01:50-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/9/Screenshot_1.png" alt="" />
-                    I was brought on to the TF2Maps.net staff team to bring my technical expertise to help maintain and improve the state of our systems. The first thing I did in order to get an idea of how the servers were used was to install some&hellip;
+                    <p>I was brought on to the <a href="https://tf2maps.net/">TF2Maps.net</a> staff team to bring my technical expertise to help maintain and improve the state of our systems. </p>
+<p>The first thing I did in order to get an idea of how the servers were used was to install some monitoring software. </p>
+
                 ]]>
             </summary>
         <content type="html">
@@ -805,11 +1026,12 @@ time() - namedprocess_namegroup_oldest_start_time_seconds{instance=~"$host"}
             <category term="Level Design"/>
             <category term="Gaming"/>
 
-        <updated>2022-01-28T20:59:05-07:00</updated>
+        <updated>2023-01-11T19:02:00-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/8/franklin-rell-materialvol22.jpg" alt="" />
-                    For a while now i've been learning to use a program called Substance Designer. It allows you to procedurally and nondestructively create textures for 3D programs to use. For me i've been trying to use it to emulate the Team Fortress 2 Style. There's been&hellip;
+                    <p>For a while now i've been learning to use a program called <a href="https://www.adobe.com/products/substance3d-designer.html">Substance Designer</a>. It allows you to procedurally and nondestructively create textures for 3D programs to use. For me i've been trying to use it to emulate the <a href="https://polycount.com/discussion/73559/texturing-for-team-fortress-2-a-short-guide">Team Fortress 2 Style</a>.</p>
+
                 ]]>
             </summary>
         <content type="html">
@@ -1069,11 +1291,14 @@ time() - namedprocess_namegroup_oldest_start_time_seconds{instance=~"$host"}
         <id>https://patcave.me/database-linked-dataclasses/</id>
             <category term="Programming Stuff"/>
 
-        <updated>2022-05-26T15:00:56-06:00</updated>
+        <updated>2023-01-11T19:03:09-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/14/The-Ultimate-Guide-to-Data-Classes-in-Python-3-2.webp" alt="" />
-                    The most common use of a class in Python is acting as a data container. Throughout the development of our backend libraries at Narrative Science, we’ve seen several generations of code that attempts to make modeling this data easy. Finding a simple to use abstraction&hellip;
+                    <p>The most common use of a class in Python is acting as a data container. Throughout the development of our backend libraries at Narrative Science, we’ve seen several generations of code that attempts to make modeling this data easy.</p>
+<p>Finding a simple to use abstraction for these type of classes allows us to focus less on writing mundane classes and more on our business logic.</p>
+<p>In this post we will outline the evolution of this code and the pros and drawbacks of each approach.</p>
+
                 ]]>
             </summary>
         <content type="html">
@@ -1275,17 +1500,19 @@ class User(UserIn):
             <category term="Level Design"/>
             <category term="Gaming"/>
 
-        <updated>2022-01-27T14:07:21-07:00</updated>
+        <updated>2023-01-11T19:02:13-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/7/20200515140446_1.jpg" alt="" />
-                    For a while now i've been working on level design projects at TF2Maps.net, and something that has been a huge need in the community is getting models for the game tailored to certain game play needs or to fit into a theme. Having run into&hellip;
+                    <p>For a while now i've been working on level design projects at <a href="https://tf2maps.net/">TF2Maps.net</a>, and something that has been a huge need in the community is getting models for the game tailored to certain game play needs or to fit into a theme. </p>
+
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://patcave.me/media/posts/7/20200515140446_1.jpg" alt="" />
                 <p>For a while now i've been working on level design projects at <a href="https://tf2maps.net/">TF2Maps.net</a>, and something that has been a huge need in the community is getting models for the game tailored to certain game play needs or to fit into a theme. </p>
+
 <p>Having run into this kind of problem myself I decided to take it on myself to learn modeling. I'm the kind of person who goes way out of his way to help fill a need for whatever organization I'm in.</p>
 <hr>
 <h2>Humble beginnings</h2>
@@ -1398,17 +1625,19 @@ class User(UserIn):
         <id>https://patcave.me/serverless-sftp-in-aws/</id>
             <category term="Programming Stuff"/>
 
-        <updated>2022-05-26T14:59:27-06:00</updated>
+        <updated>2023-01-11T19:03:19-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/13/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574.png" alt="" />
-                    At Narrative Science we believe in giving our engineers the freedom to innovate. We do this through an annual 3-day hackathon and quarterly hack days. In addition, we have an Incubation Team that works on prototyping ideas not otherwise found on our roadmap. In this post, I would like&hellip;
+                    <p>At Narrative Science we believe in giving our engineers the freedom to innovate. We do this through an annual 3-day hackathon <i>and</i> quarterly hack days. In addition, we have an Incubation Team that works on prototyping ideas not otherwise found on our roadmap. </p>
+
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                     <img src="https://patcave.me/media/posts/13/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574.png" alt="" />
                 <p>At Narrative Science we believe in giving our engineers the freedom to innovate. We do this through an annual 3-day hackathon <i>and</i> quarterly hack days. In addition, we have an Incubation Team that works on prototyping ideas not otherwise found on our roadmap. </p>
+
 <p>In this post, I would like to showcase one of the projects that another engineer and myself were able to complete during our most recent annual hackathon. Specifically, we were able to take one of our most critical servers and turn it into a serverless system using Amazon Transfer, Lambda, and S3.</p>
 <hr>
 <h2>What were we replacing?</h2>
@@ -1658,11 +1887,12 @@ class User(UserIn):
             <category term="Programming Stuff"/>
             <category term="Gaming"/>
 
-        <updated>2022-01-28T13:15:41-07:00</updated>
+        <updated>2023-01-11T19:03:32-07:00</updated>
             <summary>
                 <![CDATA[
                         <img src="https://patcave.me/media/posts/1/GettyImages-1175415560_459958_ao5trb.jpg" alt="" />
-                    I have this hobby where I basically take things that I spend a lot of time with and use my coding skills to try to automate things as much as I can, particularly in the realm of the video games I play. I originally started&hellip;
+                    <p>I have this hobby where I basically take things that I spend a lot of time with and use my coding skills to try to automate things as much as I can, particularly in the realm of the video games I play.</p>
+
                 ]]>
             </summary>
         <content type="html">
@@ -1783,120 +2013,6 @@ class User(UserIn):
 <p>I also want to play with the idea of having the <a href="https://developer.valvesoftware.com/wiki/SourceTV">SourceTV</a> camera directed by machine learning. How awesome would it be to have a computer know and show you where the big moments are. Basically can follow the action in the game so viewers can just sit back and watch as if a crew was doing all of it.</p>
 <p>Add some feature to make the "pick up game" (pug) experience better. MMR for players to try to balance teams. Ability to just randomize teams. Ability to have a 2 captains pick players and assign them to teams.</p>
 <p>Offer this as a cheap paid service for the Team Fortress community in general. Not sure how much I would charge per month; not looking to get rich or anything; but make my hosting costs into nothing.</p>
-            ]]>
-        </content>
-    </entry>
-    <entry>
-        <title>What I learned from making a Discord bot framework</title>
-        <author>
-            <name>Patrick Hennessy</name>
-        </author>
-        <link href="https://patcave.me/what-i-learned-from-making-a-discord-bot-framework/"/>
-        <id>https://patcave.me/what-i-learned-from-making-a-discord-bot-framework/</id>
-            <category term="Programming Stuff"/>
-
-        <updated>2022-05-26T15:21:09-06:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://patcave.me/media/posts/2/cover-1.png" alt="" />
-                    Lately I've been reading and hearing a lot about Chat Ops. It's a practice started by Github which uses a chat service like Hipchat or Slack with a bot user to provide feedback and insights into their infrastructure. This is super cool because it allows for transparency in to what&hellip;
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <img src="https://patcave.me/media/posts/2/cover-1.png" alt="" />
-                <p dir="auto">Lately I've been reading and hearing a lot about <a href="https://www.pagerduty.com/blog/what-is-chatops/" rel="nofollow">Chat Ops</a>. It's a practice started by Github which uses a chat service like <em>Hipchat</em> or <em>Slack</em> with a bot user to provide feedback and insights into their infrastructure.</p>
-<p dir="auto">This is super cool because it allows for transparency in to what you're doing at any given time. Very useful in a high stress situation, like a big production failure where multiple engineers are trying to fix it; they can easily coordinate their efforts and not have to tell everyone what they're doing right that second because everyone can see it.</p>
-<p dir="auto"> </p>
-<h2 dir="auto">Motivations</h2>
-<p dir="auto">When I was younger, I played in the early days of <strong>Starcraft 1</strong> and <strong>Diablo II</strong>. To play online; you had an IRC like client called Battle.Net, and there were bots galore. Thanks to our collective knowledge; the clan I was in at the time, we became the top clan in Diablo. One of the services we ran was a trivia bot, which is half the reason people came to our channel. The other was the exp runs they could get from it.</p>
-<p dir="auto">Ever since getting on these modern chat services, I wanted a bot that I built entirely on my own. So my initial idea was to build a trivia bot. It used webhooks; and I did everything synchronously with some simple HTTP-server library. It worked; but was far from an ideal implementation.</p>
-<p dir="auto">But I did have an awesome name for it: <em><strong>Regis Philbot</strong></em>, after the infamous Who Want's to be a Millionaire host; so of course I wanted to make the bot as cool as the name.</p>
-<p dir="auto"> </p>
-<h2 dir="auto">The first iteration</h2>
-<p dir="auto">While there were many bots already out there; I wanted the challenge of building it myself from scratch. I made the decision to use Python, which I was still sort of new to at the time (but so glad I did).</p>
-<p dir="auto">My initial design was poor; not thought out at all. I guess I just wanted to see if I could even get it to work at all. I did get it working; but it was very buggy and unstable.</p>
-<p dir="auto">I had started using <a href="http://discordapp.com/" rel="nofollow">Discord</a> chat / voice service for some of my gaming friends and I, and I wanted to get a bot in there to have fun with. So started rewriting the bot from scratch and began the process of reverse engineering the Discord API. (This was fairly easy since Discord is a web based client)</p>
-<p dir="auto"> </p>
-<h2 dir="auto">Super Object Oriented Python Master Race</h2>
-<p dir="auto">I didn't have the whole design in my head when I started; but my goal was to create a simple to use API for plugins, so that you can write a plugin that does stuff. To facilitate this; I started with a <code>Core</code> object.</p>
-<h3 dir="auto">Core</h3>
-<p dir="auto">In <a href="https://en.wikipedia.org/wiki/Object-oriented_programming" rel="nofollow">object oriented programming</a> terms, the <code>Core</code> uses <em>composition</em>. So then the question is; what things should the core allow us to do?</p>
-<p dir="auto">Heres what I came up with:</p>
-<ul dir="auto">
-<li>Connect / Disconnect to chat service</li>
-<li>Manage the Bot config</li>
-<li>Handle plugins</li>
-<li>Broker events</li>
-</ul>
-<h3 dir="auto">Connector</h3>
-<p dir="auto">The connector class is the bot's interface to the chat service; in this case, I was using <a href="https://discordapp.com/" rel="nofollow">Discord</a>.</p>
-<p dir="auto">This class was a good opportunity to use an <strong><a href="https://en.wikipedia.org/wiki/Protocol_(object-oriented_programming)" rel="nofollow">interface</a></strong>. So then we ask; what does the bot need to be able to do with the chat service? What things are common operations among all modern chat services?</p>
-<p dir="auto">I created a number of methods to abstract this:</p>
-<div class="highlight highlight-source-python position-relative overflow-auto">
-<pre><code class="language-python">
-connector.say()                 # Says something in a chat channel
-connector.reply()               # Replies to a user who invoked a command
-connector.whisper()             # Uses private messaging with the user
-connector.getUser()             # Get data about a specific user
-connector.getChannel()          # Get data about a particular channel
-connector.upload()              # Upload a file to the server        
-</code></pre>
-</div>
-<p dir="auto">The tricky part was going to be how I could make the bot <em>recieve</em> messages as well. This ended up being a <a href="https://docs.python.org/3.5/library/threading.html" rel="nofollow">thread</a> that just listens on a <a href="https://docs.python.org/3.5/library/socket.html" rel="nofollow">socket</a> for new messages.</p>
-<p dir="auto">It was at this point I started hitting a lot of problems with the socket; websocket; and requests libraries. It got really wonky trying to use <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" rel="nofollow">SSL</a> in Python 2.7, so I was forced to upgrade to Python 3.</p>
-<p dir="auto">So now this <em>""message consumer""</em> thread would need to actually produce messages in a way the bot can understand and notify the bot that it has received a message. The first iteration of the system was poor; and it was already showing performance issues since this one thread was literally doing all the bot logic. <strong>Bad bad bad</strong></p>
-<h3 dir="auto">Going Multi threaded</h3>
-<p dir="auto">I has read that you can get considerable performance gains by using <a href="https://en.wikipedia.org/wiki/Thread_pool" rel="nofollow">thread pooling</a>. I could get away with this since I don't have to ensure that the bot does things in a 100% FIFO manner. I also thought that; what if a plugin is waiting on an HTTP response from an API? In a single threaded system; he would just be sitting there and no one could interact with it until that request returned. A bot isn't a <a href="https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop" rel="nofollow">REPL</a> interface per-say.</p>
-<p dir="auto">So now I had to make a class to handle my pool of threads; and I had <em>never</em> done any meaningful threaded programming before this.</p>
-<p dir="auto">Python makes this stupidly simple, it has a FIFO queue library that blocks when dequeueing an item. This just means that more than one thread can't take something from the queue at the same time as another. So then it was just as simple as creating a generic <code>worker</code> class that would run any function you give it. Python even makes this easy because functions are <a href="https://en.wikipedia.org/wiki/First-class_function" rel="nofollow">first class citizens.</a></p>
-<p dir="auto">Awesome! I just learned a lot about threading and how the OS handles blocking; plus now my bot can be working on many things at once.</p>
-<h3 dir="auto">Plugin System</h3>
-<p dir="auto">This is where things got super <em>""meta""</em>.</p>
-<p dir="auto">I wanted to be able to 'sandbox' plugins from each other; and be able to unload them. Once again, Python allows you do some cool things like dynamically linking code modules at runtime.</p>
-<p dir="auto">I needed a way to manage these plugins. This led to me making a bunch of classes.</p>
-<ul dir="auto">
-<li>Plugin Superclass</li>
-<li>Plugin Manager</li>
-<li>Command Manager</li>
-<li>Event Manager</li>
-<li>Decorators (Oh god no)</li>
-</ul>
-<p dir="auto">So obviously; the Plugin manager is what handles the plugins themselves; Loading, unloading, and tracking their loaded instances.</p>
-<p dir="auto">Python has this thing called <em>metaprogramming</em>; which allows you to mess with parts of methods and classes. Under the hood; everything is just a <code>dict</code> object. You can abuse this by piggy backing on it to pass information around.</p>
-<p dir="auto">This is when I wrote my first decorator. What it does it set flags on a method to say that it is a command; and here is how it is invoked. I could now abstract this from the plugin so the manager could know that this is intended to be a command.</p>
-<p dir="auto">Theres a problem that happens tho; if you hit an exception in a plugin; that threaded worker is now dead. Shit.</p>
-<p dir="auto">So I had to make it so the workers would throw the exception but keep going.</p>
-<p dir="auto"> </p>
-<h2 dir="auto">Tying everything together</h2>
-<p dir="auto">The glue that makes the bot work really lies in the <code>message consumer</code> thread; which resides in the connector. When it encounters a message from the socket; it queue's up for a threaded worker to pick up, and this worker will check to see if this message is something the bot should respond to.</p>
-<h3 dir="auto">Gravy features</h3>
-<p dir="auto">Getting the core functionality done felt pretty good. The plugin syntax was simple and everything worked very well together; but I felt very limited in what my plugin could do.</p>
-<h4 dir="auto">Persistance</h4>
-<p dir="auto">This was a tough one; I figured I wanted to use an <a href="https://en.wikipedia.org/wiki/Object-relational_mapping" rel="nofollow">ORM</a>, which basically allows you to use SQL as if it were Python code.</p>
-<p dir="auto">The elephant in the room is <a href="http://www.sqlalchemy.org/" rel="nofollow">SQL Alchemy</a>, being that it is the most popular standalone ORM for Python. When I investigated it; I found it very clunky and really didn't like it. I considered a few other options until stumbling on <a href="http://docs.peewee-orm.com/en/latest/" rel="nofollow">PeeWee</a>; which is an extremely lightweight ORM. It had everything I needed without all the fluff.</p>
-<p dir="auto">I abstracted it out a bit; plugins getting their own database file; as well as automatically setting up the database tables and a key value store for them behind the scenes. The less plugin code I have to write; the better.</p>
-<h4 dir="auto">Access Control</h4>
-<p dir="auto">This depended on persistence obviously; but I quickly found it tedious to have people being able to run any command on my bot. There was no way to restrict who could do what.</p>
-<p dir="auto">I setup ACL's so that each user gets an 'access' rank, -1 to 999. You then specify in your plugins how much access is required to use a particular command. So now I have a <code>banhammer</code> command; which only I can use.</p>
-<p dir="auto"> </p>
-<h2 dir="auto">Challenges</h2>
-<p dir="auto">There were a lot of gotchas that I fell into; and looks like a lot of Python programmers fall victim to them as well.</p>
-<p dir="auto">I had to do some digging; but it turns out that Python's <code>thread</code> library is deprecated, and you're supposed to use the <code>threading</code> library instead. Super confusing.</p>
-<p dir="auto">I had the same problem with the websocket library too though; there is a socket library, and several unofficial websocket libraries. The ones I looked at couldn't connect to my Slack server, and they were really clunky to use; but I found someone who was making something similar use a obscure websocket library which works extremely well. (Thank god)</p>
-<p dir="auto"> </p>
-<h2 dir="auto">What I learned</h2>
-<p dir="auto">Overall; it has been a good experience. It caused me to touch many many aspects of Python; and get experience with using all these features together.</p>
-<p dir="auto">The thread pool class had me dig into Python's <code>threading</code> library. I learned about the best practices for starting, managing and stopping threads; as well as design considerations.</p>
-<p dir="auto">The other classes were more for organization and sanity; but I learned about <a href="http://www.secnetix.de/olli/Python/list_comprehensions.hawk" rel="nofollow">list comprehension</a> as well as iterators and iterables. Though I prefer using more explicit code for doing list operations.</p>
-<p dir="auto">I also found out that there is official support for Java-like class declarations. You can create an abstract class, define getters and setters, method overloading, calling the super constructor, etc. Though in Python, it looks very odd in my opinion.</p>
-<p dir="auto">My pub/sub system for events allowed me to learn about how functions/methods are treated on the same level as an <code>int</code>, and that there is a buttload of meta classes attached to each function callback, which can tell me things about it. I also played with decorators quite a bit. An interesting little syntactic sugar for Python; I thought it could simplify my plugin system even further, however I couldn't quite figure out how to make it work how I wanted it.</p>
-<p dir="auto">When implementing my <code>help</code> command in my basic chat plugin; I learned about the <code>__docstring__</code> meta tag, so I could have my code documented in line. Fantastic.</p>
-<p dir="auto"> </p>
-<h2 dir="auto">In Summation...</h2>
-<p dir="auto">For anyone who doesn't do random hacking projects like this; I highly recommend it. I touched quite a bit of Python's breadth and learned a hell of a lot about how everything works in the language.</p>
-<p dir="auto">Most of all, the bot works! Sure, it's not perfect, there are some tweaks that it still needs; like more error handling, edge-case things, etc. But at this point; I would consider it stable enough to run it on my Discord server.","</p>
-<p dir="auto">Lately I've been reading and hearing a lot about Chat Ops. It's essentially a DevOp's practice started by <strong>Github</strong> which uses a chat service like <em>Hipchat</em> or <em>Slack</em> with a bot user to manage their team and infrastructure.</p>
             ]]>
         </content>
     </entry>

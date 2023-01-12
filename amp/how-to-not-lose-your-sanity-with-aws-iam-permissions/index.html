@@ -1,0 +1,688 @@
+<!doctype html><html amp lang="en-us"><head><meta charset="utf-8"><title>Managing IAM more sanely - The Patcave</title><meta name="description" content="AWS IAM is the global permissions system that AWS uses. People are often mystified by how it works and often end up just giving everything *.* permissions. "><link rel="canonical" href="https://patcave.me/how-to-not-lose-your-sanity-with-aws-iam-permissions/"><meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1"><link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet" type="text/css"><script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script><script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script><script async custom-element="amp-iframe" src="https://cdn.ampproject.org/v0/amp-iframe-0.1.js"></script><script async custom-element="amp-video" src="https://cdn.ampproject.org/v0/amp-video-0.1.js"></script><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://patcave.me/amp/how-to-not-lose-your-sanity-with-aws-iam-permissions/"},"headline":"Managing IAM more sanely","datePublished":"2022-09-08T18:20","dateModified":"2023-01-11T19:20","image":{"@type":"ImageObject","url":"https://patcave.me/media/posts/11/identity-access-management-iam-2.png","height":540,"width":960},"description":"AWS IAM is the global permissions system that AWS uses. People are often mystified by how it works and often end up just giving everything *.* permissions. ","author":{"@type":"Person","name":"Patrick Hennessy","url":"https://patcave.me/amp/authors/patrick-hennessy/"},"publisher":{"@type":"Organization","name":"Patrick Hennessy"}}</script><style amp-custom>article,
+aside,
+footer,
+header,
+hgroup,
+main,
+nav,
+section {
+  display: block; }
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0; }
+
+li {
+  list-style: none; }
+
+amp-img {
+  max-width: 100%; }
+
+button,
+input,
+select,
+textarea {
+  font: inherit; }
+
+html {
+  font-size: 1rem; }
+
+body {
+  background: #f1f1f1;
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  line-height: 1.6; }
+
+a {
+  color:  #039be5;
+  text-decoration: none;
+  -webkit-transition: all 0.12s linear 0s;
+  -o-transition: all 0.12s linear 0s;
+  transition: all 0.12s linear 0s; }
+
+a:hover {
+  color: #262626;
+  text-decoration: underline;
+  -webkit-text-decoration-skip: ink;
+  text-decoration-skip: ink; }
+
+a:active {
+  color: #262626; }
+
+a:focus {
+  outline: 2px dotted #039be5; }
+
+figure,
+blockquote,
+p,
+ul,
+ol,
+dl,
+table,
+hr,
+fieldset {
+  margin-top: 1.6rem; }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-top: 2.13333rem; }
+
+h1 {
+  font-size: 1.67583rem;
+  font-weight: normal; }
+
+h2 {
+  font-size: 1.4729rem; }
+
+h3 {
+  font-size: 1.29454rem; }
+
+h4 {
+  font-size: 1.13778rem; }
+
+h5 {
+  font-size: 1rem; }
+
+h6 {
+  font-size: 0.87891rem; }
+
+h2 + p,
+h3 + p,
+h4 + p,
+h5 + p,
+h6 + p {
+  margin-top: 0.8rem; }
+
+b,
+strong {
+  font-weight: 600; }
+
+blockquote {
+  color: #6c7175;
+  font-family: "Droid Serif", "Times", "Source Serif Pro", serif;
+  font-style: italic;
+  padding: 1.33333rem 0.53333rem 1.33333rem 3.2rem;
+  position: relative; }
+  blockquote:before {
+    display: block;
+    content: "\201C";
+    font-size: 4.41226rem;
+    position: absolute;
+    left: 0;
+    top: -12px;
+    color: rgba(108, 113, 117, 0.5); }
+  blockquote > :nth-child(1) {
+    margin-top: 0; }
+
+ul,
+ol {
+  margin-left: 2rem; }
+  ul > li,
+  ol > li {
+    list-style: inherit;
+    padding: 0 0 0.26667rem 0.26667rem; }
+
+dl dt {
+  color: #262626;
+  font-weight: 600; }
+
+code,
+pre {
+  background-color: #f1f1f1;
+  font-family: monospace; }
+
+pre {
+  margin: 1.6rem 0 0;
+  padding: 1.6rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto; }
+  pre > code {
+    color: #262626;
+    padding: 0; }
+
+code {
+  border-radius: 3px;
+  color: #262626;
+  padding: 0.26667rem 0.53333rem; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid #d4d4d4;
+  width: 100%;
+  overflow-x: auto;
+  vertical-align: top;
+  text-align: left;
+  white-space: nowrap; }
+  table th {
+    font-weight: 500;
+    padding: 0.53333rem 1.06667rem; }
+  table tr {
+    border-bottom: 1px solid #d4d4d4; }
+    table tr:nth-child(2n) {
+      background: #f1f1f1; }
+  table td {
+    padding: 0.53333rem 1.06667rem; }
+
+figcaption {
+  clear: both;
+  color: rgba(108, 113, 117, 0.6);
+  font-size: 0.82397rem;
+  margin: 0.8rem 0 0;
+  text-align: center; }
+
+sub,
+sup {
+  font-size: 65%; }
+
+hr {
+  border: 0;
+  height: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3); }
+
+.btn, [type=button],
+[type=submit],
+button {
+  background: #039be5;
+  border: none;
+  border-radius: 2px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.87891rem;
+  font-weight: 500;
+  line-height: 1.9;
+  padding: 0.53333rem 1.33333rem;
+  text-align: center;
+  text-decoration: none;
+  -webkit-transition: all .15s ease;
+  -o-transition: all .15s ease;
+  transition: all .15s ease;
+  width: auto; }
+  .btn:hover, [type=button]:hover,
+  [type=submit]:hover,
+  button:hover {
+    background: #262626;
+    color: #ffffff; }
+  .btn:focus, [type=button]:focus,
+  [type=submit]:focus,
+  button:focus {
+    outline: none; }
+  .btn-outline {
+    border: 1px solid #ddd;
+    background: #ffffff;
+    border-radius: 3px;
+    color: #262626; }
+
+[type=button],
+[type=submit],
+button {
+  text-transform: uppercase;
+  -webkit-appearance: none;
+  -moz-appearance: none; }
+
+.navbar {
+  background: #039be5;
+  -webkit-box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+  line-height: 3;
+  max-height: 4rem; }
+  .navbar > div {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    text-align: left;
+    max-width: 700px;
+    margin: 0 auto; }
+  .navbar a {
+    color: #ffffff;
+    text-decoration: none; }
+  .navbar-sidebar-toggle {
+    left: 0;
+    position: relative;
+    text-indent: -99999rem; }
+    .navbar-sidebar-toggle:before {
+      content: "";
+      display: block;
+      border-top: 0.375rem double #ffffff;
+      border-bottom: 0.125rem solid #ffffff;
+      height: 0.125rem;
+      position: absolute;
+      text-indent: 0;
+      top: 50%;
+      width: 1.3rem;
+      -webkit-transform: translate(0px, -50%);
+      -ms-transform: translate(0px, -50%);
+      transform: translate(0px, -50%); }
+
+
+.logo {
+            display: inline-block;
+  font-weight: 600;
+  line-height: 1;
+            margin: 0 auto;
+            height: 2rem;
+            text-indent: -9999px;
+            width: 240px;vertical-align: middle;
+        }
+        .logo.logo-text {
+            line-height: 2;
+            text-align: center;
+            text-indent: 0;
+        }
+
+amp-sidebar {
+  background: #ffffff;
+  width: 240px; }
+  amp-sidebar > ul {
+    margin: 0.8rem 0 0;
+    padding: 0; }
+    amp-sidebar > ul ul {
+      border-left: 1px solid #d4d4d4;
+      margin: 0.53333rem 0 0; }
+    amp-sidebar > ul li {
+      color: #262626;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      list-style: none;
+      line-height: 1.4;
+      padding: 0.42667rem 1.06667rem; }
+      amp-sidebar > ul li li {
+        font-weight: normal;
+        padding: 0.26667rem 0 0.26667rem 1.06667rem; }
+    amp-sidebar > ul a,
+    amp-sidebar > ul a:visited {
+      color: #262626; }
+
+.bg-white {
+  background: #ffffff; }
+
+.wrap-page {
+  max-width: 700px;
+  margin: 0 auto; }
+
+@media all and (max-width: 43.6875em) {
+  .wrap-inner {
+    padding: 0 6%; } }
+
+.page-title {
+  background: #ffffff;
+  -webkit-box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  margin-bottom: 0.8rem;
+  padding: 1.6rem 6%; }
+  .page-title > h1 {
+    margin: 0;
+    font-size: 1.29454rem; }
+  .page-title > p {
+    font-size: 0.87891rem;
+    color: #6c7175;
+    line-height: 1.3;
+    margin: 0.26667rem 0 0; }
+  .page-title-author {
+    border-radius: 50%;
+    float: left;
+    height: 2.5rem;
+    width: 2.5rem; }
+    .page-title-author + h1 {
+      margin-left: 3.5rem; }
+      .page-title-author + h1 + p {
+        margin-left: 3.5rem; }
+
+.card {
+  background: #ffffff;
+  -webkit-box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  box-shadow: 0 2px 3px rgba(38, 38, 38, 0.1);
+  margin-bottom: 0.8rem;
+  padding-bottom: 1.06667rem; }
+
+  .card-meta {
+    border-top: 1px solid #d4d4d4;
+    color: rgba(108, 113, 117, 0.6);
+    font-size: 0.7242rem;
+    font-weight: 500;
+    margin-top: 1.06667rem;
+    padding-top: 1.06667rem;
+    text-transform: uppercase; }
+    .card-meta a + time:before {
+      content: "";
+      background: #d4d4d4;
+      display: inline-block;
+      height: 3px;
+      margin: 0 8px;
+      width: 3px;
+      vertical-align: middle;
+      border-radius: 50%; }
+  .card-text {
+    font-size: 0.9375rem;
+    overflow: hidden;
+    padding: 0 6%; }
+    .card-text h2 {
+      font-size: 1.13778rem; }
+
+.post {
+  margin-bottom: 2.13333rem; }
+  .post-featured-image {
+    margin-top: 0;
+    position: relative; }
+    .post-featured-image > figcaption {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 3px;
+      color: #ffffff;
+      position: absolute;
+      bottom: 0.8rem;
+      padding: 0 0.26667rem;
+      right: 6%; }
+  .post-header {
+    margin-bottom: 2.13333rem; }
+  .post-meta {
+    border-bottom: 1px solid #d4d4d4;
+    color: rgba(108, 113, 117, 0.6);
+    font-size: 0.7242rem;
+    font-weight: 500;
+    margin-top: 1.06667rem;
+    padding-bottom: 1.06667rem;
+    text-transform: uppercase; }
+    .post-meta a + time:before {
+      content: "";
+      background: #d4d4d4;
+      display: inline-block;
+      height: 3px;
+      margin: 0 8px;
+      width: 3px;
+      vertical-align: middle;
+      border-radius: 50%; }
+  .post-tag {
+    margin: 0; }
+    .post-tag > li {
+      display: inline-block;
+      padding: 0; }
+      .post-tag > li a {
+        background: #f1f1f1;
+        border-radius: 2px;
+        color: #6c7175;
+        font-size: 0.77248rem;
+        display: inline-block;
+        margin: 0 0.26667rem 0.26667rem 0;
+        padding: 0.26667rem 0.53333rem; }
+        .post-tag > li a:hover {
+          background: #039be5;
+          color: #ffffff;
+          text-decoration: none; }
+  .post-share {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    margin-top: 1.6rem;
+    width: 100%; }
+    .post-share amp-social-share {
+      -webkit-box-flex: 1;
+      -ms-flex: 1 0 auto;
+      flex: 1 0 auto;
+      background-size: 24px; }
+  .post-scroll {
+    color: #ffffff;
+    background: #039be5;
+    bottom: 10px;
+    border-radius: 50%;
+    border: none;
+    -webkit-box-shadow: 0 1px 1.5px 0 rgba(38, 38, 38, 0.12), 0 1px 1px 0 rgba(38, 38, 38, 0.24);
+    box-shadow: 0 1px 1.5px 0 rgba(38, 38, 38, 0.12), 0 1px 1px 0 rgba(38, 38, 38, 0.24);
+    font-size: 1.13778rem;
+    height: 46px;
+    opacity: 0;
+    outline: none;
+    position: fixed;
+    padding: 0;
+    right: 4%;
+    visibility: hidden;
+    width: 46px;
+    z-index: 9999; }
+    .post-scroll-marker {
+      height: 0px;
+      position: absolute;
+      top: 100px;
+      width: 0px; }
+        .post-pagination {
+    background: #f1f1f1;
+    -webkit-box-shadow: inset 0 2px 3px rgba(38, 38, 38, 0.1);
+    box-shadow: inset 0 2px 3px rgba(38, 38, 38, 0.1);
+    border-top: 1px solid #d4d4d4;
+    padding: 1.06667rem 0; }
+    .post-pagination > div {
+      line-height: 1.2;
+      padding: 0.53333rem 1.06667rem;
+      text-align: center; }
+      .post-pagination > div span {
+        display: block;
+        color: #6c7175;
+        font-size: 0.7242rem;
+        font-weight: 500;
+        margin-bottom: 0.26667rem;
+        text-transform: uppercase; }
+    .post-pagination-prev a:before {
+      content: "\2190";
+      margin-right: 0.26667rem; }
+    .post-pagination-next a:after {
+      content: "\2192";
+      margin-left: 0.26667rem; }
+
+aside {
+  margin: 1.6rem 0 0; }
+
+.align-left {
+  text-align: left; }
+
+.align-right {
+  text-align: right; }
+
+.align-center {
+  text-align: center; }
+
+.align-justify {
+  text-align: justify; }
+
+.msg {
+  border-left: 2px solid transparent;
+  padding: 1.06667rem 1.06667rem; }
+  .msg--highlight {
+    background-color: #fff8e6;
+    border-color: #e2ac4f; }
+  .msg--info {
+    background: rgba(45, 97, 201, 0.03);
+    border-color: #039be5; }
+  .msg--success {
+    background: #f7fbf6;
+    border-color: #5ab44b; }
+  .msg--warning {
+    background: #fff3f3;
+    border-color: #c06367;
+    color: #a94442; }
+
+.dropcap:first-letter {
+  float: left;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 2.16943rem;
+  line-height: 0.7;
+  margin-right: 0.53333rem;
+  padding: 0.53333rem 0.53333rem 0.53333rem 0; }
+
+.pagination {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin: 0.8rem 0; }
+  .pagination > a {
+    padding-left: 0;
+    padding-right: 0;
+    width: 49%; }
+  .pagination-right {
+    margin-left: auto; }
+
+.bottom {
+  background: #039be5;
+  color: #ffffff;
+  padding: 1.06667rem 4%;
+  text-align: center; }
+
+    /*
+ * Put your custom CSS code here (it will be used only in the AMP mode)
+ */</style><style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript><script async src="https://cdn.ampproject.org/v0.js"></script><script custom-element="amp-animation" src="https://cdn.ampproject.org/v0/amp-animation-0.1.js" async></script><script custom-element="amp-position-observer" src="https://cdn.ampproject.org/v0/amp-position-observer-0.1.js" async></script></head><body class="bg-white"><nav class="navbar wrap-inner" id="top"><div><a on="tap:navbar-sidebar.toggle" class="navbar-sidebar-toggle" title="Menu">Menu</a> <a class="logo logo-text" href="https://patcave.me/amp/">The Patcave</a></div></nav><main class="wrap-page"><article class="post"><figure class="post-featured-image"><amp-img src="https://patcave.me/media/posts/11/identity-access-management-iam-2.png" alt="" srcset="https://patcave.me/media/posts/11/responsive/identity-access-management-iam-2-xs.png 300w ,https://patcave.me/media/posts/11/responsive/identity-access-management-iam-2-sm.png 480w ,https://patcave.me/media/posts/11/responsive/identity-access-management-iam-2-md.png 768w" sizes="(max-width: 768px) 100vw, 768px" height="540" layout="responsive" width="960"></amp-img></figure><div class="wrap-inner"><header class="post-header"><h1>Managing IAM more sanely</h1><p class="post-meta"><time datetime="2022-09-08T18:20">September 8, 2022</time></p></header><p><a href="https://aws.amazon.com/iam/" target="_blank" rel="noopener noreferrer">AWS IAM</a> is the global permissions system that AWS uses. People are often mystified by how it works and often end up just giving everything <code>*.*</code> permissions. </p><p>In this post I'll discuss things I learned while managing the IAM configuration at <a href="https://en.wikipedia.org/wiki/Narrative_Science" target="_blank" rel="noopener noreferrer">Narrative Science</a> and hopefully allow you to manage your IAM account in a much for sane and scalable way.</p><hr><h2>IAM Primer</h2><figure class="post__image post__image--right"><amp-img src="https://cdn.worldvectorlogo.com/logos/aws-iam.svg" data-is-external-image="true" alt="" width="81" height="155" layout="responsive"></amp-img></figure>IAM is composed of a few primitives:<p></p><ul><li>Roles</li><li>Policies</li><li>Groups</li><li>Users</li></ul><p>Roles, Groups and Users can all have policies attached to them. Groups are composed of multiple Users. For example, you could have a <code>db-admin</code> group that has the common permissions needed for that task, and users can be added or removed easily from it.</p><p>Users and Roles are the entities that <a href="https://www.okta.com/identity-101/authentication-vs-authorization/" target="_blank" rel="noopener noreferrer">authenticate</a> with AWS. There's a lot of ways this can be done but most commonly it's either an EC2 instance with a Role applied, or an Employee with an access key.</p><p>Policies are where the rubber hits the road. When you author a policy, you can say to allow or deny access to a resource (though <em>not</em> allowing something is an implicit deny).</p><p>Here is AWS's official documentation on the subject:<br><a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_access-management.html">https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_access-management.html</a></p><p>It will also be important to understand ARN's (Amazon Resource Identifiers) as they are used extensively in IAM policy documents:<br><a href="https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html">https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html</a></p><hr><h2>Security Objectives</h2><ul><li><a href="https://www.cyberark.com/what-is/least-privilege/" target="_blank" rel="noopener noreferrer">Least privilege</a> access:<br>In short, only granting permissions to the resources and actions an entity will need to perform. The idea here is that having credentials compromised doesn't allow an attacker to do anything they want.</li><li>Easy to administer in a fast changing environment.<br>Employee turn over, new projects coming online, etc</li><li>In a multiple account setup, have a single user account for each employee</li></ul><hr><h2>Naïve Solution #1</h2><p>One of the first solutions we used at Narrative Science, you just go through all the resources an entity needs access to and which actions they need and grant them. This is a "grant-only" solution, so never use a deny in these policies.</p><p>Seems pretty straight forward, why is this naïve?</p><p>Well AWS has some annoying limitations:</p><ul><li>Users not have more than 10 policies attached.</li><li>Users can not be a member of more than 10 groups.</li><li>User policy size cannot exceed 2,048 characters.</li><li>Role policy size cannot exceed 10,240 characters.</li><li>Group policy size cannot exceed 5,120 characters.</li></ul><p>These might seem like a lot of wiggle room at first but you'll find very quickly that you start running out and have to be overly permissive to fit within these bounds, especially if your team has generalists that perform multiple job functions.</p><p>If a user is already maxed out on groups and policies, but needs permission to perform a certain function for a small period of time (privilege escalation), what do you do? Well I guess we just drop one they don't need at that time and revert it later. You'll need some way of tracking that escalation and reminder to deescalate when they're done, which will almost certainly be required for compliance anyway.</p><p>At best this is an annoying burden on the admin team managing the user permission granting. At worst this will just lead to that team getting fed up and granting way overly permissive permissions.</p><hr><h2>Naïve Solution #2</h2><p>Lets try the opposite; being overly permissive and having explicit deny's on certain resources. On the surface this seems reasonable since its probably easier to state what you <i>don't</i> want to grant access to vs what you do.</p><p>Say for example you want engineers to have free access of a lower environment, but want to deny all of production. Well if you have good resource tagging, you can mostly deny by anything with a production tag or having <code>prod</code> somewhere in the ARN.</p><p>This also very quickly becomes a mess and doesn't save that many characters in your policy documents after its all said and done. Some resources require you to be able to have read / list access, otherwise the UI is unusable. One example is CloudFormation having to have read / list permissions on all resources but also you have to deny any update access to production stacks specifically. But do you then deny CreateStack access in CloudFormation too? </p><p>There's also a huge wrinkle here; you cannot allow users to create IAM policies because they can just create a role that grants higher access and allow themselves to be able to <a href="https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html" target="_blank" rel="noopener noreferrer">assume that role</a>. But then how do you allow one to make IAM policies that are deployed with a CloudFormation stack?</p><hr><h2>A Better Solution</h2><p>First of all, one of the biggest issues we had was that we were running both our lower environment and production environments in the same AWS account. We thought that it was good to be diligent with tagging and resource naming but that didn't really help us here for the reasons listed in the last section; even though its still really great to be diligent with resource naming and tagging for billing and clarity of communication.</p><p>AWS allows an <a href="https://aws.amazon.com/organizations/" target="_blank" rel="noopener noreferrer">Organization</a> to have multiple accounts associated with it. IAM doesn't do well trying to isolate resources in the same AWS account, so first order of business; isolate your production resources in it's own AWS account, then you can focus on access control to that account specifically.<br><br>In our Organization, we setup a security account where all the IAM user accounts are, a non-production account where users were granted almost complete admin access, and a production account where access was extremely locked down.</p><p>Before we go further, we need to understand a 2 advanced AWS IAM features:</p><ul><li><a href="https://docs.aws.amazon.com/images/IAM/latest/UserGuide/images/permissions_boundary.png" target="_blank" rel="noopener noreferrer">Permission Boundary's</a><br>You can basically grant a wider array of access, then with a boundary policy, restrict the access to only the resources in that boundary. Think of it like a Venn diagram of permissions:<br><br><amp-img src="https://docs.aws.amazon.com/images/IAM/latest/UserGuide/images/EffectivePermissions-session-boundary-id.png" data-is-external-image="true" width="292" height="243" layout="responsive"></amp-img><br><br></li><li><a href="https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html" target="_blank" rel="noopener noreferrer">Assume Role</a><br>An IAM user can inhabit the permissions of a Role, but only the permissions applied to that role itself.<br>Both the UI and CLI are able to do these role assumptions, and can be done in a way that requires MFA (big plus for compliance). This feature is what will enable us to have single IAM accounts per employee but allow them to have permissions in multiple AWS accounts. </li></ul><p>So the idea here is; you create roles with open permissions that you then restrict down with a permission boundary, creating much more strict effective permissions; and then users can inhabit those roles.<br><br>You can define these roles any way you want, it will vary greatly depending on your organization and this can obviously be a bit subjective. We decided to define our roles roughly along discrete job functions which allows for an employee to inhabit the role needed to complete a certain task without having to grant full admin (unless that is what is needed).<br><br>For our production account, we created the following roles:</p><ul><li><strong>Admin </strong>- Complete god permissions only granted to a few, mostly just myself.</li><li><strong>ProdAdmin </strong>- Almost the same as god permissions except for it cant change IAM roles, view billing or make account wide changes. Used for team leads / architects<br><strong>OnCall </strong>- Basically a copy of ProdAdmin except that we wanted to keep this distinct incase these 2 roles diverged. Also its more obvious what it is.</li><li><strong>ProdEngineer </strong>- Allows engineers to view the status of deployments, read log files, view alarm states. </li><li><strong>CustomerSuccess</strong> - Allow our customer success team to manage our Serverless SFTP and handle issues relating to customer data delivery. They basically only had access to a few S3 buckets.</li></ul><p>If a new job function should arise, then you can of course make new roles to suit those needs. We were working on adding a new one right before we were <a href="https://narrativescience.com/resource/blog/narrative-science-signs-agreement-to-be-acquired-by-salesforce" target="_blank" rel="noopener noreferrer">acquired by Salesforce</a> that would allow some of our engineers to train and maintain production ML models; just as an example.</p><p>The advantage of this setup is that not only do you not run into annoying AWS limitations, but also you can grant or remove access to individual users as needed. This can get out of hand to manage manually, so we codified all of our IAM using Git and Terraform. This had the side effect of also allowing engineers to request a role escalation via Git that we could gate with <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners" target="_blank" rel="noopener noreferrer">CodeOwners</a>, and have an audit trail for compliance.</p><p class="msg msg--highlight msg--info"><strong>Side note</strong>: CloudTrail does log when a user assumes a role, and will show that role's session id in any logs done while that user is in that role; so you can audit who did what and when. </p><h3>Example Code</h3><p>Enough of me describing the theory of this; here's some actual code. I'm not allowed to share the exact code (for obvious reasons), however here is an example to demonstrate how we used permission boundaries. Basically think of these 2 policy documents in a Venn diagram. </p><p>Role Permissions:</p><pre><code class="language-json">{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:Describe*",
+                "cloudformation:EstimateTemplateCost",
+                "cloudformation:Get*",
+                "cloudformation:List*",
+                "cloudformation:ValidateTemplate",
+                "cloudformation:Detect*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}    
+</code></pre><p>Role Boundary:</p><pre><code class="language-json">{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:*"
+            ],
+            "Resource": [
+                "arn:aws:cloudformation:*:ACCOUNT_ID_REDACTED:stack/prod-app-*/*",
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:Describe*",
+                "cloudformation:List*",
+                "cloudformation:Get*",
+                "cloudformation:GetTemplateSummary",
+                "cloudformation:CreateChangeSet",
+                "cloudformation:ExecuteChangeSet"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}  
+</code></pre><p>Terraform Role Creation Module:</p><pre><code class="language-hcl">variable "app_admins" {
+    type = list(string)
+    default = [
+        "user1",
+        "user2",
+        "user3",
+        "user4",
+        "user5"
+    ]
+}
+
+resource "aws_iam_role" "app_admin" {
+    name = "app_admin"
+    path = "/humans/"
+    max_session_duration = 3600
+
+    assume_role_policy = data.aws_iam_policy_document.app_admin_trust_policy.json
+    permissions_boundary  = aws_iam_policy.app_admin_boundry.arn
+}
+
+data "aws_iam_policy_document" "app_admin_trust_policy" {
+    statement {
+        principals {
+            type = "AWS"
+            identifiers = [
+                for user in var.app_admins :
+                "arn:aws:iam::ACCOUNT_ID_REDACTED:user/${user}"
+            ]
+        }
+
+        actions = [
+            "sts:AssumeRole",
+            "sts:AssumeRoleWithWebIdentity"
+        ]
+
+        condition {
+            test = "Bool"
+            variable = "aws:MultiFactorAuthPresent"
+            values = ["true"]
+        }
+    }
+}
+
+resource "aws_iam_policy" "app_admin" {
+    name = "app_admin"
+    policy = file("${path.module}/../policies/app_admin.json")
+}
+
+resource "aws_iam_policy" "app_admin_boundry" {
+    name = "app_admin_boundry"
+    policy = file("${path.module}/../permission_boundries/app_boundry.json")
+}
+
+resource "aws_iam_role_policy_attachment" "app_admin_attach" {
+    role = aws_iam_role.app_admin.name
+    policy_arn = aws_iam_policy.app_admin.arn
+}        
+</code></pre><hr><h2>Permission Scopedown for Services</h2><figure class="post__image post__image--left"><amp-img src="https://www.openaccessgovernment.org/wp-content/uploads/2019/09/dreamstime_xxl_123552072.jpg" data-is-external-image="true" width="351" height="233" layout="responsive"></amp-img></figure>A distinction that should be made is that so far we've focused this on<em> IAM for Humans</em>: permissions that apply to employee IAM accounts, but haven't really touched on<em> IAM for Services</em>: permissions granted to EC2 instances and the like.<p></p><p>We never ended up putting this into action at Narrative Science but I stand by the design and idea. </p><p>With services, it can be quite tedious to know <em>all</em> the permissions exhaustively that a service will need ahead of time. Even in earnest, most humans will miss a lot because AWS has just so many services and caveats. But we also need to reach least privilege access for services, is there a way to do this so it takes the burden off the developer <em>and </em>can allow you to achieve least privilege? </p><p>The solution here I think is quite elegant. I call it IAM Scopedown.</p><p>Basically, a new project that is not yet in production is allowed to run for a time, say 1 month (but the duration is somewhat arbitrary). Initially you grant a sane but knowingly over permissive set of permissions to the app. CloudTrail will log the actions that project did during that time. Then you can view those logs and see which permissions the app actually needed and edit your IAM policies based on that.</p><p>This is ripe for a script isnt it? Well good news, one exists for this very thing! Enter <a href="https://github.com/duo-labs/cloudtracker" target="_blank" rel="noopener noreferrer">Cloudtracker</a>.</p><p>To further on this idea; I would have automation run this script and send IAM scopedown suggestions to the team managing the project; ideally with the exact output needed for an IAM policy document. This is more of a "eventually least privilege" solution; which is far better than what usually happens where people give up and grant it way too much.</p><p>It is possible to have this tool automatically scope down service policies live in production, but I'm wary of not having a human involved in something that is likely to brick production in unexpected ways; though with time and developing on this idea further, I think that is feasible.<br><br>This scopedown procedure can probably also be applied to IAM for Humans but just because something goes unused doesn't necessarily mean it wont have need in the future. This is why I make the distinction between Services and Humans, since they tend to have big differences in their security needs.</p><hr><h2>Conclusion</h2><p>Using a few advanced IAM features and a little bit of clever design, you can make your IAM setup a LOT less tedious to deal with, and reasonably achieve least privilege. </p><p>I have to give some credit to Netflix engineers on their "security pizza" talk. I built on a lot of ideas from this talk:<br><br></p><div class="post__iframe"><amp-iframe sandbox="allow-scripts allow-same-origin" layout="responsive" width="560" height="314" src="https://www.youtube.com/embed/aVVX8hV_ywI" allowfullscreen="allowfullscreen" data-mce-fragment="1"></amp-iframe></div><p> </p><aside><ul class="post-tag"><li><a href="https://patcave.me/amp/tags/computer-science/">Programming Stuff</a></li></ul></aside></div></article><nav class="post-pagination wrap-inner"><div class="post-pagination-prev"><span>Previous</span> <a href="https://patcave.me/amp/disaster-averted/">Disaster Averted</a></div></nav></main><amp-animation id="showAnim" layout="nodisplay"><script type="application/json">{
+                    "duration": "200ms",
+                    "fill": "both",
+                    "iterations": "1",
+                    "direction": "alternate",
+                    "animations": [{
+                        "selector": ".post-scroll",
+                        "keyframes": [{
+                            "opacity": "1",
+                            "visibility": "visible",
+                            "transform": "scale(1)"
+                        }]
+                    }]
+                }</script></amp-animation><amp-animation id="hideAnim" layout="nodisplay"><script type="application/json">{
+                    "duration": "200ms",
+                    "fill": "both",
+                    "iterations": "1",
+                    "direction": "alternate",
+                    "animations": [{
+                        "selector": ".post-scroll",
+                        "keyframes": [{
+                            "opacity": "0",
+                            "visibility": "hidden",
+                            "transform": "scale(0.1)"
+                        }]
+                    }]
+                }</script></amp-animation><div class="post-scroll-marker"><amp-position-observer on="enter:hideAnim.start; exit:showAnim.start" layout="nodisplay"></amp-position-observer></div><button class="post-scroll" on="tap:top.scrollTo(duration=200)">&#8593;</button><footer class="bottom">© PATRICK HENNESSY 2015 - 2022</footer><amp-sidebar id="navbar-sidebar" layout="nodisplay"><ul><li><a href="https://patcave.me/amp/">Home</a></li><li><a href="https://patcave.me/amp/about/">About</a></li><li><span>Contact</span><ul class="navbar__submenu level-2" aria-hidden="true"><li><a href="https://www.linkedin.com/in/pmhennessy/" target="_blank">LinkedIn</a></li><li><a href="https://github.com/p-hennessy" target="_blank">Github</a></li><li><a href="https://www.youtube.com/channel/UCIw-YA385k1S5IOwYD-iV5Q" target="_blank">YouTube</a></li><li><a href="https://tf2maps.net/members/zeus.28272/" target="_blank">TF2Maps.net</a></li><li><a href="mailto:phennessy517@gmail.com" target="_blank">Email</a></li></ul></li></ul></amp-sidebar></body></html>

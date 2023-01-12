@@ -14,7 +14,7 @@
 </url>
 <url>
 <loc>https://patcave.me/automate-all-the-things/</loc>
-<lastmod>2022-01-28T13:15:41-07:00</lastmod>
+<lastmod>2023-01-11T19:03:32-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\1/GettyImages-1175415560_459958_ao5trb.jpg</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -34,7 +34,7 @@
 </url>
 <url>
 <loc>https://patcave.me/database-linked-dataclasses/</loc>
-<lastmod>2022-05-26T15:00:56-06:00</lastmod>
+<lastmod>2023-01-11T19:03:09-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\14/The-Ultimate-Guide-to-Data-Classes-in-Python-3-2.webp</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -42,7 +42,7 @@
 </url>
 <url>
 <loc>https://patcave.me/disaster-averted/</loc>
-<lastmod>2022-04-26T05:16:01-06:00</lastmod>
+<lastmod>2023-01-11T19:01:18-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\12/blueprints.png</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -74,7 +74,7 @@
 </url>
 <url>
 <loc>https://patcave.me/game-server-monitoring/</loc>
-<lastmod>2022-05-26T15:18:46-06:00</lastmod>
+<lastmod>2023-01-11T19:01:50-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\9/Screenshot_1.png</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -106,7 +106,7 @@
 </url>
 <url>
 <loc>https://patcave.me/graduation/</loc>
-<lastmod>2022-04-26T05:11:18-06:00</lastmod>
+<lastmod>2023-01-11T19:02:21-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\6/Columns_Jesse-10.jpg</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -129,8 +129,16 @@
 </image:image>
 </url>
 <url>
+<loc>https://patcave.me/how-to-not-lose-your-sanity-with-aws-iam-permissions/</loc>
+<lastmod>2023-01-11T19:20:54-07:00</lastmod>
+<image:image>
+<image:loc>https://patcave.me/media\posts\11/identity-access-management-iam-2.png</image:loc>
+<image:title><![CDATA[]]></image:title>
+</image:image>
+</url>
+<url>
 <loc>https://patcave.me/i-am-officially-a-professional-game-designer/</loc>
-<lastmod>2022-01-28T22:43:05-07:00</lastmod>
+<lastmod>2023-01-11T19:02:34-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\5/Pd_farmageddon.png</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -186,7 +194,7 @@
 </url>
 <url>
 <loc>https://patcave.me/learning-3d-modeling-for-video-games/</loc>
-<lastmod>2022-01-27T14:07:21-07:00</lastmod>
+<lastmod>2023-01-11T19:02:13-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\7/20200515140446_1.jpg</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -258,7 +266,7 @@
 </url>
 <url>
 <loc>https://patcave.me/my-choice-tools-for-cloud-engineering/</loc>
-<lastmod>2022-04-21T03:55:42-06:00</lastmod>
+<lastmod>2023-01-11T19:01:41-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\10/cover-2.png</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -316,7 +324,7 @@
 </url>
 <url>
 <loc>https://patcave.me/procedural-texture-creation/</loc>
-<lastmod>2022-01-28T20:59:05-07:00</lastmod>
+<lastmod>2023-01-11T19:02:00-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\8/franklin-rell-materialvol22.jpg</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -520,7 +528,7 @@
 </url>
 <url>
 <loc>https://patcave.me/serverless-sftp-in-aws/</loc>
-<lastmod>2022-05-26T14:59:27-06:00</lastmod>
+<lastmod>2023-01-11T19:03:19-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\13/Screen-Shot-2019-07-31-at-5.06.03-PM-1024x574.png</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -536,7 +544,7 @@
 </url>
 <url>
 <loc>https://patcave.me/setting-up-a-secure-linux-server/</loc>
-<lastmod>2022-01-29T15:34:40-07:00</lastmod>
+<lastmod>2023-01-11T19:04:05-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\4/linux.security.11614.jpg</image:loc>
 <image:title><![CDATA[]]></image:title>
@@ -544,7 +552,7 @@
 </url>
 <url>
 <loc>https://patcave.me/what-i-learned-from-making-a-discord-bot-framework/</loc>
-<lastmod>2022-05-26T15:21:09-06:00</lastmod>
+<lastmod>2023-01-11T19:03:40-07:00</lastmod>
 <image:image>
 <image:loc>https://patcave.me/media\posts\2/cover-1.png</image:loc>
 <image:title><![CDATA[]]></image:title>
